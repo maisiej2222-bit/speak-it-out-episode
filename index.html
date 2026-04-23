@@ -1551,10 +1551,18 @@
         <div class="container">
             <a href="index.html" class="top-nav-logo">🎓 Speak It Out</a>
             <div class="top-nav-links">
-                <a href="index.html">📚 Course</a>
+                <a href="index.html" class="active">📚 Course</a>
+                <a href="play.html">🎮 Play</a>
             </div>
         </div>
     </nav>
+
+    <style>
+        .top-nav-links a.active {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+    </style>
 
     <!-- Hero Section -->
     <section class="hero" id="section0">
@@ -1732,192 +1740,6 @@
                     <button class="btn" onclick="buildSentence()">Build Sentence</button>
                 </div>
                 <div class="practice-result" id="practiceResult"></div>
-            </div>
-
-            <!-- Sentence Challenge Game -->
-            <div class="sentence-challenge">
-                <div class="challenge-header">
-                    <h4>🎯 Sentence Challenge <span style="font-size: 0.9rem; color: var(--text-tertiary); font-weight: 400;">|</span> <span style="font-size: 0.9rem; color: var(--text-secondary);">Unscramble & Build</span></h4>
-                    <span class="challenge-level" id="challengeLevel">Ready to Start</span>
-                </div>
-
-                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 15px;">
-                    Tap words to <span class="highlight">arrange</span> them in correct order. <span class="highlight">5 levels</span> × 3 sentences = 15 challenges
-                </p>
-
-                <!-- Start Challenge Button -->
-                <div id="challengeStartScreen" style="text-align: center; padding: 40px 20px;">
-                    <div style="font-size: 4rem; margin-bottom: 20px;">🎯</div>
-                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">Ready to Challenge?</h3>
-                    <p style="color: var(--text-secondary); margin-bottom: 30px; max-width: 500px; margin-left: auto; margin-right: auto;">
-                        Enter your name and complete all 15 sentences. Your time will be recorded on the leaderboard!
-                    </p>
-                    <input
-                        type="text"
-                        id="playerNameInput"
-                        placeholder="Your name"
-                        maxlength="20"
-                        style="
-                            width: 100%;
-                            max-width: 300px;
-                            padding: 15px;
-                            font-size: 1.1rem;
-                            border: 2px solid var(--border-color);
-                            border-radius: 12px;
-                            background: var(--bg-secondary);
-                            color: var(--text-primary);
-                            margin-bottom: 20px;
-                            text-align: center;
-                        "
-                    >
-                    <br>
-                    <button class="btn" onclick="startChallenge()" style="font-size: 1.1rem; padding: 15px 50px;">
-                        🚀 Start Challenge
-                    </button>
-                    <div style="margin-top: 30px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">
-                        <div style="background: var(--bg-secondary); padding: 20px; border-radius: 12px;">
-                            <div style="font-size: 2rem; margin-bottom: 10px;">5</div>
-                            <div style="color: var(--text-tertiary); font-size: 0.85rem;">Levels</div>
-                        </div>
-                        <div style="background: var(--bg-secondary); padding: 20px; border-radius: 12px;">
-                            <div style="font-size: 2rem; margin-bottom: 10px;">15</div>
-                            <div style="color: var(--text-tertiary); font-size: 0.85rem;">Sentences</div>
-                        </div>
-                        <div style="background: var(--bg-secondary); padding: 20px; border-radius: 12px;">
-                            <div style="font-size: 2rem; margin-bottom: 10px;">🏆</div>
-                            <div style="color: var(--text-tertiary); font-size: 0.85rem;">Leaderboard</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Game Area (hidden until started) -->
-                <div id="challengeGameArea" style="display: none;">
-                    <!-- Level Progress -->
-                    <div class="level-progress" id="levelProgress">
-                        <div class="progress-dot current"></div>
-                        <div class="progress-dot"></div>
-                        <div class="progress-dot"></div>
-                        <div class="progress-dot"></div>
-                        <div class="progress-dot"></div>
-                    </div>
-
-                    <!-- Player Name Display -->
-                    <div style="text-align: center; margin: 15px 0;">
-                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Player: </span>
-                        <span id="playerNameDisplay" style="color: var(--accent-blue); font-weight: 600; font-size: 1.1rem;">-</span>
-                    </div>
-
-                    <!-- Timer Display -->
-                    <div class="challenge-timer-display">
-                        <div class="timer-stat">
-                            <div class="value" id="levelTimer">00:00</div>
-                            <div class="label">This Level</div>
-                        </div>
-                        <div class="timer-stat">
-                            <div class="value" id="totalTimer">00:00</div>
-                            <div class="label">Total Time</div>
-                        </div>
-                        <div class="timer-stat">
-                            <div class="value" id="sentenceCount">1/3</div>
-                            <div class="label">Sentence</div>
-                        </div>
-                    </div>
-
-                    <div class="scrambled-words" id="scrambledWords">
-                        <!-- Scrambled words will be injected here -->
-                    </div>
-
-                    <div class="answer-slots" id="answerSlots">
-                        <div class="answer-slot">Tap a word</div>
-                        <div class="answer-slot">↑</div>
-                        <div class="answer-slot">↑</div>
-                    </div>
-
-                    <div class="challenge-actions">
-                        <button class="btn btn-secondary" onclick="resetChallenge()">↺ Reset</button>
-                        <button class="btn" onclick="checkAnswer()">✓ Check</button>
-                    </div>
-
-                    <div class="challenge-result-box" id="challengeResult">
-                        <h4 id="challengeResultTitle">🎉 Correct!</h4>
-                        <p id="challengeResultText" style="margin-top: 10px;"></p>
-                    </div>
-
-                    <div class="hint-text" id="challengeHint">
-                        <strong>💡 Tip:</strong> Start with a subject or polite phrase. Think: Who + What + Where/Why
-                    </div>
-
-                    <!-- Completion Screen -->
-                    <div class="completion-screen" id="completionScreen">
-                        <div class="completion-emoji">🏆</div>
-                        <h2 class="completion-title">Challenge Complete!</h2>
-                        <p style="color: var(--text-secondary); font-size: 1.1rem;">You've mastered all 15 sentences!</p>
-
-                        <div class="completion-stats">
-                            <div class="completion-stat">
-                                <div class="value" id="finalTime">00:00</div>
-                                <div class="label">Total Time</div>
-                            </div>
-                            <div class="completion-stat">
-                                <div class="value" id="finalAttempts">0</div>
-                                <div class="label">Total Attempts</div>
-                            </div>
-                            <div class="completion-stat">
-                                <div class="value" id="finalAccuracy">0%</div>
-                                <div class="label">Accuracy</div>
-                            </div>
-                        </div>
-
-                        <!-- QR Code for Leaderboard -->
-                        <div class="qr-section">
-                            <h4>📱 Scan to View Leaderboard</h4>
-                            <p>Open the QR code to see the global rankings and submit your score!</p>
-                            <div class="qr-container">
-                                <div id="qrcode"></div>
-                            </div>
-                            <p class="qr-hint">Scan to export your score and view rankings</p>
-                            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
-                                <button class="btn btn-secondary" onclick="exportLeaderboard()" style="font-size: 0.85rem; padding: 8px 15px;">
-                                    📤 Export My Score
-                                </button>
-                                <a href="speak-it-out-leaderboard-server.html" target="_blank" class="btn btn-secondary" style="font-size: 0.85rem; padding: 8px 15px; text-decoration: none;">
-                                    🏆 View Leaderboard
-                                </a>
-                            </div>
-                        </div>
-
-                        <button class="restart-btn" onclick="restartChallenge()">🔄 Try Again</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Leaderboard Section -->
-            <div class="leaderboard-section" id="leaderboardSection">
-                <div class="leaderboard-header">
-                    <h4>🏆 Leaderboard</h4>
-                    <p style="color: var(--text-secondary);">Top times from all players</p>
-                </div>
-                <ul class="leaderboard-list" id="leaderboardList">
-                    <!-- Leaderboard items will be injected here -->
-                </ul>
-
-                <!-- Leaderboard Actions -->
-                <div style="display: flex; justify-content: center; gap: 15px; margin-top: 25px; flex-wrap: wrap;">
-                    <button class="btn btn-secondary" onclick="exportLeaderboard()" style="font-size: 0.9rem; padding: 10px 20px;">
-                        📤 Export
-                    </button>
-                    <label class="btn btn-secondary" style="font-size: 0.9rem; padding: 10px 20px; cursor: pointer;">
-                        📥 Import
-                        <input type="file" accept=".json" onchange="importLeaderboard(this.files[0])" style="display: none;">
-                    </label>
-                    <button class="btn btn-secondary" onclick="clearLeaderboard()" style="font-size: 0.9rem; padding: 10px 20px;">
-                        🗑️ Clear
-                    </button>
-                </div>
-
-                <p style="text-align: center; color: var(--text-tertiary); font-size: 0.85rem; margin-top: 20px;">
-                    Export to share your leaderboard with others · Import to merge leaderboards from different devices
-                </p>
             </div>
         </div>
     </section>
@@ -2410,18 +2232,6 @@
                 <p>English is not something you <span class="highlight">study</span>.</p>
                 <span class="emphasis">It is something you use.</span>
                 <p style="margin-top: 40px; font-size: 1.3rem; color: var(--text-tertiary);">Keep speaking. Keep using. See you next episode.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Quick Links Section -->
-    <section class="quick-links" style="padding: 60px 20px; text-align: center; background: var(--bg-secondary);">
-        <div class="container">
-            <h2 style="font-size: 1.8rem; margin-bottom: 10px;">🎮 Want More Practice?</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 30px;">Try the Sentence Challenge and see how you rank!</p>
-            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                <a href="challenge.html" class="btn" style="background: var(--accent-green); color: #000;">🚀 Start Challenge</a>
-                <a href="leaderboard.html" class="btn btn-secondary">🏆 View Leaderboard</a>
             </div>
         </div>
     </section>

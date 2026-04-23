@@ -270,6 +270,11 @@
             flex: 1;
         }
 
+        .top-nav-links a.active {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+
         @media (max-width: 600px) {
             .stats-grid { grid-template-columns: 1fr; }
             .leaderboard-item { flex-wrap: wrap; }
@@ -285,7 +290,7 @@
             <div class="top-nav-links">
                 <a href="index.html">📚 Course</a>
                 <a href="challenge.html">🎮 Challenge</a>
-                <a href="leaderboard.html">🏆 Leaderboard</a>
+                <a href="leaderboard.html" class="active">🏆 Leaderboard</a>
             </div>
         </div>
     </nav>
@@ -298,11 +303,6 @@
                 <span class="live-dot"></span>
                 <span>Live • Updates every 3s</span>
             </div>
-        </div>
-
-        <div class="btn-group">
-            <button class="btn" onclick="window.location.href='index.html'">📚 Course</button>
-            <button class="btn btn-green" onclick="window.location.href='challenge.html'">🎮 New Challenge</button>
         </div>
 
         <!-- Round Selector -->
@@ -348,7 +348,7 @@
     <script>
         const LOCAL_KEY = 'speakItOut_leaderboard';
         const ROUNDS_KEY = 'speakItOut_rounds';
-        const API_URL = '/.netlify/functions/leaderboard';
+        const API_URL = '/api/leaderboard';
 
         let currentRound = 'all';
         let leaderboardData = [];
