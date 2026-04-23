@@ -76,6 +76,47 @@
             letter-spacing: 2px;
         }
 
+        /* Top Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            padding: 15px 0;
+        }
+        .top-nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .top-nav-logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        .top-nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        .top-nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+        .top-nav-links a:hover {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+        body { padding-top: 60px; }
+
         .hero h1 {
             font-size: 7rem;
             font-weight: 700;
@@ -1504,6 +1545,18 @@
             <span class="label">speaks</span>
         </div>
     </div>
+
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="container">
+            <a href="index.html" class="top-nav-logo">🎓 Speak It Out</a>
+            <div class="top-nav-links">
+                <a href="index.html">📚 Course</a>
+                <a href="challenge.html">🎮 Challenge</a>
+                <a href="leaderboard.html">🏆 Leaderboard</a>
+            </div>
+        </div>
+    </nav>
 
     <!-- Hero Section -->
     <section class="hero" id="section0">

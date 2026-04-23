@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netlify 部署 - Speak It Out</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #0d1117 0%, #1c2128 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 750px; margin: 0 auto; }
+        h1 { font-size: 2rem; margin-bottom: 10px; color: #00dc82; }
+        .subtitle { color: #8b949e; margin-bottom: 30px; }
+        .card {
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .card h2 { font-size: 1.3rem; margin-bottom: 15px; color: #00dc82; }
+        .btn {
+            display: inline-block;
+            background: #00dc82;
+            color: #0d1117;
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 10px 5px;
+            font-size: 1rem;
+        }
+        .btn:hover { background: #00c175; }
+        .step { display: flex; align-items: flex-start; margin: 18px 0; }
+        .step-num {
+            background: #00dc82;
+            color: #0d1117;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 15px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        .note {
+            background: rgba(0, 220, 130, 0.15);
+            border-left: 4px solid #00dc82;
+            padding: 18px;
+            border-radius: 8px;
+            margin: 20px 0;
+            line-height: 1.7;
+        }
+        .urls {
+            background: rgba(121, 192, 255, 0.15);
+            border-left: 4px solid #58a6ff;
+            padding: 18px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .urls h3 { color: #58a6ff; margin-bottom: 10px; }
+        code {
+            background: #0d1117;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: "SF Mono", monospace;
+            font-size: 13px;
+            color: #79c0ff;
+            display: inline;
+        }
+        .divider { height: 1px; background: #30363d; margin: 30px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Netlify 部署</h1>
+        <p class="subtitle">Speak It Out Episode 1 - 完全免费，无需信用卡</p>
+
+        <div class="note">
+            <strong>✅ Netlify 优势：</strong>无限带宽、免费 HTTPS、Serverless 函数支持、每月 100GB 流量
+        </div>
+
+        <div class="card">
+            <h2>方式一：拖拽上传（最快，30 秒上线）</h2>
+            <div class="step">
+                <span class="step-num">1</span>
+                <div>
+                    <a href="https://app.netlify.com/drop" target="_blank" class="btn">打开 Netlify Drop</a>
+                </div>
+            </div>
+            <div class="step">
+                <span class="step-num">2</span>
+                <div>
+                    把 <code>/Users/chenhong/speak-it-out-project</code> 文件夹整个拖到上传区域
+                </div>
+            </div>
+            <div class="step">
+                <span class="step-num">3</span>
+                <div>
+                    等待部署完成（约 30 秒），获得类似链接：
+                    <br><code>https://your-site-123456.netlify.app</code>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>方式二：GitHub 同步（推荐，自动部署）</h2>
+            <div class="step">
+                <span class="step-num">1</span>
+                <div>
+                    <a href="https://app.netlify.com/start" target="_blank" class="btn">登录 Netlify</a>
+                </div>
+            </div>
+            <div class="step">
+                <span class="step-num">2</span>
+                <div>
+                    点击 <strong>Add new site</strong> → <strong>Import an existing project</strong>
+                </div>
+            </div>
+            <div class="step">
+                <span class="step-num">3</span>
+                <div>
+                    用 GitHub 登录，选择 <code>speak-it-out-episode1</code> 仓库
+                </div>
+            </div>
+            <div class="step">
+                <span class="step-num">4</span>
+                <div>
+                    点击 <strong>Deploy site</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="urls">
+            <h3>✅ 部署完成后：</h3>
+            <p style="margin: 10px 0;"><strong>课程页面：</strong></p>
+            <code>https://your-site.netlify.app/</code>
+            <p style="margin: 10px 0;"><strong>挑战页面：</strong></p>
+            <code>https://your-site.netlify.app/challenge.html</code>
+            <p style="margin: 10px 0;"><strong>排行榜：</strong></p>
+            <code>https://your-site.netlify.app/leaderboard.html</code>
+        </div>
+
+        <div class="note">
+            <strong>📱 学生使用：</strong><br>
+            发送挑战链接给学生，他们打开后点击 <strong>🚀 Start Challenge</strong>，
+            输入名字完成 15 句话，成绩自动提交到排行榜。
+        </div>
+
+        <div class="divider"></div>
+
+        <p style="color:#8b949e; font-size:13px;">
+            项目位置：<code>/Users/chenhong/speak-it-out-project/</code>
+        </p>
+    </div>
+</body>
+</html>
