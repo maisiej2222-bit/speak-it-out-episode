@@ -346,9 +346,12 @@
     </div>
 
     <script>
+        // Supabase Configuration - Direct API Access
+        const SUPABASE_URL = 'https://eyjrlyrbchkabndsbwrm.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5anJseXJiY2hrYWJuZHNid3JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1NzY4NzcsImV4cCI6MjA2MTE1Mjg3N30.Xz3qJhG6vZ8K9mF4nL2pR5tY7wE1uI0oA3sD6fH8jCk';
+
         const LOCAL_KEY = 'speakItOut_leaderboard';
         const ROUNDS_KEY = 'speakItOut_rounds';
-        const API_URL = '/api/leaderboard';
 
         let currentRound = 'all';
         let leaderboardData = [];
@@ -402,16 +405,24 @@
 
         async function fetchLeaderboard() {
             try {
-                const res = await fetch(API_URL);
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?order=time.asc`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
                 if (res.ok) {
-                    const result = await res.json();
-                    if (result.success && result.data && result.data.length > 0) {
-                        leaderboardData = result.data;
+                    const data = await res.json();
+                    if (data && data.length > 0) {
+                        leaderboardData = data;
                         saveLocal(leaderboardData);
                         return true;
                     }
                 }
-            } catch (e) {}
+            } catch (e) {
+                console.log('API fetch error:', e);
+            }
             return false;
         }
 
