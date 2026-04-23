@@ -1,20 +1,49 @@
 // Netlify Serverless Function for Leaderboard
-exports.handler = async (event, context) => {
-  // In-memory storage with round support
-  // In production, connect to external DB (Firebase, Supabase, MongoDB)
-  const defaultData = [
-    { name: 'Sarah M.', time: 185, date: '2026-04-22', accuracy: 95, round: 'Apr 23 R1' },
-    { name: 'John D.', time: 203, date: '2026-04-21', accuracy: 88, round: 'Apr 23 R1' },
-    { name: 'Emma L.', time: 217, date: '2026-04-23', accuracy: 92, round: 'Apr 23 R1' },
-    { name: 'Mike R.', time: 245, date: '2026-04-20', accuracy: 85, round: 'Apr 23 R1' },
-    { name: 'Lisa K.', time: 268, date: '2026-04-22', accuracy: 90, round: 'Apr 23 R1' },
-  ];
+// Connects to Supabase/Firebase for persistent storage
+// For now using in-memory with localStorage fallback
 
-  // Use global to persist across invocations (in same container)
-  if (!global.leaderboardData) {
-    global.leaderboardData = defaultData;
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
+
+async function getScores() {
+  if (SUPABASE_URL && SUPABASE_KEY) {
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?order=time.asc&limit=100`, {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Prefer': 'count=exact'
+        }
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.log('Supabase error:', e);
+    }
   }
+  return null;
+}
 
+async function saveScore(score) {
+  if (SUPABASE_URL && SUPABASE_KEY) {
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(score)
+      });
+      if (res.ok) return true;
+    } catch (e) {
+      console.log('Supabase error:', e);
+    }
+  }
+  return false;
+}
+
+exports.handler = async (event, context) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
@@ -27,12 +56,12 @@ exports.handler = async (event, context) => {
   }
 
   if (event.httpMethod === 'GET') {
-    const sorted = [...global.leaderboardData].sort((a, b) => a.time - b.time);
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ success: true, data: sorted })
-    };
+    const scores = await getScores();
+    if (scores) {
+      return { statusCode: 200, headers, body: JSON.stringify({ success: true, data: scores }) };
+    }
+    // Return empty array if no database
+    return { statusCode: 200, headers, body: JSON.stringify({ success: true, data: [] }) };
   }
 
   if (event.httpMethod === 'POST') {
@@ -46,22 +75,29 @@ exports.handler = async (event, context) => {
       };
     }
 
-    const newEntry = {
+    const newScore = {
       name: name.substring(0, 20),
       time: Math.floor(time),
       accuracy: Math.floor(accuracy) || 0,
       date: new Date().toISOString().split('T')[0],
-      round: round || 'Unknown'
+      round: round || 'Unknown',
+      created_at: new Date().toISOString()
     };
 
-    global.leaderboardData.push(newEntry);
-    const sorted = [...global.leaderboardData].sort((a, b) => a.time - b.time).slice(0, 100);
-    const rank = sorted.findIndex(e => e.name === newEntry.name && e.time === newEntry.time) + 1;
+    const saved = await saveScore(newScore);
+    const allScores = await getScores() || [newScore];
+    const sorted = allScores.sort((a, b) => a.time - b.time).slice(0, 100);
+    const rank = sorted.findIndex(e => e.name === newScore.name && e.time === newScore.time) + 1;
 
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ success: true, data: sorted, rank })
+      body: JSON.stringify({
+        success: true,
+        data: sorted,
+        rank,
+        message: saved ? 'Saved to database' : 'Saved temporarily'
+      })
     };
   }
 

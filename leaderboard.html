@@ -362,7 +362,15 @@
 
         function getRounds() {
             const stored = localStorage.getItem(ROUNDS_KEY);
-            return stored ? JSON.parse(stored) : { 'Round 1': [] };
+            if (stored) {
+                try { return JSON.parse(stored); } catch(e) {}
+            }
+            // Auto-generate round name based on date
+            const now = new Date();
+            const date = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            const hour = now.getHours();
+            const period = Math.floor(hour / 4) + 1;
+            return { [`${date} R${period}`]: [] };
         }
 
         function saveRounds(data) {
@@ -374,11 +382,8 @@
             if (stored) {
                 try { return JSON.parse(stored); } catch(e) {}
             }
-            return [
-                {name:'Sarah M.',time:185,date:'2026-04-22',accuracy:95,round:'Round 1'},
-                {name:'John D.',time:203,date:'2026-04-21',accuracy:88,round:'Round 1'},
-                {name:'Emma L.',time:217,date:'2026-04-23',accuracy:92,round:'Round 1'}
-            ];
+            // No mock data - only show real submissions
+            return [];
         }
 
         function saveLocal(data) {
@@ -400,7 +405,7 @@
                 const res = await fetch(API_URL);
                 if (res.ok) {
                     const result = await res.json();
-                    if (result.success) {
+                    if (result.success && result.data && result.data.length > 0) {
                         leaderboardData = result.data;
                         saveLocal(leaderboardData);
                         return true;
@@ -580,7 +585,26 @@
         let previousCount = 0;
 
         async function pollUpdates() {
-            const updated = await fetchLeaderboard();
+            // Always merge API data with localStorage for real-time display
+            const apiUpdated = await fetchLeaderboard();
+            const localData = getLocal();
+
+            // Merge API and localStorage data
+            if (apiUpdated && leaderboardData.length > 0) {
+                // Have API data, merge with local
+                const apiNames = leaderboardData.map(e => e.name + e.time + e.date);
+                localData.forEach(entry => {
+                    const key = entry.name + entry.time + entry.date;
+                    if (!apiNames.includes(key)) {
+                        leaderboardData.push(entry);
+                    }
+                });
+                leaderboardData.sort((a, b) => a.time - b.time);
+            } else {
+                // No API, use localStorage only
+                leaderboardData = localData;
+            }
+
             const currentCount = leaderboardData.length;
 
             if (currentCount > previousCount) {
@@ -598,9 +622,25 @@
         async function init() {
             rounds = getRounds();
             const hasApi = await fetchLeaderboard();
-            if (!hasApi) {
-                leaderboardData = getLocal();
+
+            // Always start with localStorage data for real-time display
+            const localData = getLocal();
+
+            if (hasApi && leaderboardData.length > 0) {
+                // Merge API and localStorage
+                const apiNames = leaderboardData.map(e => e.name + e.time + e.date);
+                localData.forEach(entry => {
+                    const key = entry.name + entry.time + entry.date;
+                    if (!apiNames.includes(key)) {
+                        leaderboardData.push(entry);
+                    }
+                });
+                leaderboardData.sort((a, b) => a.time - b.time);
+            } else {
+                // No API data, use localStorage
+                leaderboardData = localData;
             }
+
             previousCount = leaderboardData.length;
             renderRoundSelector(getAvailableRounds(leaderboardData));
             renderLeaderboard();

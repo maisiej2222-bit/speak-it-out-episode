@@ -264,6 +264,15 @@
     </div>
 
     <script>
+        // Get default round name based on date and time
+        function getDefaultRound() {
+            const now = new Date();
+            const date = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            const hour = now.getHours();
+            const period = Math.floor(hour / 4) + 1;
+            return `${date} R${period}`;
+        }
+
         // 15 sentences - 5 scenarios x 3 levels
         const sentences = [
             // Level 1: 3 words
@@ -295,6 +304,7 @@
         let timerInterval;
         let correctCount = 0;
         let totalAttempts = 0;
+        let wrongAttemptsOnCurrent = 0; // Track wrong attempts per sentence
 
         function showNameModal() {
             document.getElementById('nameModal').classList.add('active');
@@ -332,6 +342,7 @@
         function loadSentence(idx) {
             const s = sentences[idx];
             currentAnswer = [];
+            wrongAttemptsOnCurrent = 0; // Reset wrong attempts for new sentence
 
             document.getElementById('sceneBadge').textContent = s.scene;
             document.getElementById('progressNum').textContent = idx + 1;
@@ -412,14 +423,41 @@
                     }
                 }, 1200);
             } else {
-                feedback.className = 'feedback incorrect';
-                feedback.textContent = '❌ Try again! ' + s.hint;
-                feedback.classList.remove('hidden');
+                wrongAttemptsOnCurrent++;
+
+                // Check if 3 wrong attempts - offer give up
+                if (wrongAttemptsOnCurrent >= 3) {
+                    feedback.className = 'feedback incorrect';
+                    feedback.innerHTML = `❌ 3 attempts! Give up on this one?
+                        <button onclick="giveUpCurrent()" style="margin-left:10px;padding:8px 16px;background:var(--accent-pink);color:#fff;border:none;border-radius:8px;cursor:pointer;">Give Up</button>
+                        <button onclick="retryCurrent()" style="margin-left:8px;padding:8px 16px;background:var(--accent-blue);color:#fff;border:none;border-radius:8px;cursor:pointer;">Try Again</button>`;
+                    feedback.classList.remove('hidden');
+                } else {
+                    feedback.className = 'feedback incorrect';
+                    feedback.textContent = `❌ Try again! (${wrongAttemptsOnCurrent}/3) ` + s.hint;
+                    feedback.classList.remove('hidden');
+                }
 
                 currentAnswer.forEach(item => item.chip.classList.remove('used'));
                 currentAnswer = [];
                 updateAnswerArea();
             }
+        }
+
+        function giveUpCurrent() {
+            // Skip to next sentence
+            currentIdx++;
+            if (currentIdx >= sentences.length) {
+                endChallenge();
+            } else {
+                loadSentence(currentIdx);
+            }
+        }
+
+        function retryCurrent() {
+            // Reset attempts and let user try again
+            wrongAttemptsOnCurrent = 0;
+            document.getElementById('feedback').classList.add('hidden');
         }
 
         function endChallenge() {
@@ -448,9 +486,17 @@
             if (!window.challengeResult) return;
 
             // Get current round from sessionStorage or create default
-            const currentRound = sessionStorage.getItem('currentRound') || 'Round ' + new Date().getDate();
+            const currentRound = sessionStorage.getItem('currentRound') || getDefaultRound();
             window.challengeResult.round = currentRound;
+            window.challengeResult.date = new Date().toISOString().split('T')[0];
 
+            // Save to localStorage first (immediate feedback)
+            const key = 'speakItOut_leaderboard';
+            const scores = JSON.parse(localStorage.getItem(key) || '[]');
+            scores.push({ ...window.challengeResult });
+            localStorage.setItem(key, JSON.stringify(scores));
+
+            // Also try API
             fetch('/.netlify/functions/leaderboard', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
