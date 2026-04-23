@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>部署 - Speak It Out</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { font-size: 2rem; margin-bottom: 10px; color: #58a6ff; }
+        .subtitle { color: #8b949e; margin-bottom: 30px; }
+
+        .card {
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .card h2 { font-size: 1.3rem; margin-bottom: 15px; color: #58a6ff; }
+
+        .btn {
+            display: inline-block;
+            background: #238636;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 10px 5px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn:hover { background: #2ea043; }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #30363d;
+        }
+
+        code {
+            background: #0d1117;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: "SF Mono", monospace;
+            font-size: 13px;
+            color: #79c0ff;
+            display: block;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin: 15px 0;
+        }
+        .step-num {
+            background: #58a6ff;
+            color: #0d1117;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .note {
+            background: rgba(56, 139, 253, 0.15);
+            border-left: 4px solid #58a6ff;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .highlight {
+            background: rgba(46, 160, 67, 0.15);
+            border-left: 4px solid #2ea043;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        ul { margin-left: 20px; line-height: 1.8; color: #8b949e; }
+        li { margin: 8px 0; }
+
+        .divider {
+            height: 1px;
+            background: #30363d;
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Speak It Out Episode 1</h1>
+        <p class="subtitle">部署指南 - 3 分钟上线</p>
+
+        <div class="highlight">
+            <strong>✅ 推荐方案：GitHub Pages</strong><br>
+            完全免费，无需密码，通过图形界面操作
+        </div>
+
+        <div class="card">
+            <h2>📦 步骤 1：创建 GitHub 仓库</h2>
+            <div class="step">
+                <span class="step-num">1</span>
+                <div>
+                    <a href="https://github.com/new" target="_blank" class="btn">打开 GitHub 创建页面</a>
+                </div>
+            </div>
+            <div class="step">
+                <span class="step-num">2</span>
+                <div>
+                    Repository name 输入：<code style="display:inline">speak-it-out-episode1</code>
+                </div>
+            </div>
+            <div class="step">
+                <span class="step-num">3</span>
+                <div>
+                    选择 <strong>Public</strong> → 点击 <strong>Create repository</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📤 步骤 2：上传代码</h2>
+            <p style="color:#8b949e; margin-bottom:15px;">在仓库页面点击 <strong>uploading an existing file</strong></p>
+            <div class="step">
+                <span class="step-num">1</span>
+                <div>
+                    把 <code style="display:inline; padding:4px 8px;">/Users/chenhong/speak-it-out-project</code>
+                    文件夹里的所有文件拖到上传区域
+                </div>
+            </div>
+            <div class="step">
+                <span class="step-num">2</span>
+                <div>
+                    输入 Commit message：<code style="display:inline">Initial commit</code>
+                </div>
+            </div>
+            <div class="step">
+                <span class="step-num">3</span>
+                <div>
+                    点击 <strong>Commit changes</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🌐 步骤 3：开启 Pages</h2>
+            <div class="step">
+                <span class="step-num">1</span>
+                <div>
+                    进入仓库 <strong>Settings</strong> → 左侧 <strong>Pages</strong>
+                </div>
+            </div>
+            <div class="step">
+                <span class="step-num">2</span>
+                <div>
+                    Source 选择 <code style="display:inline">Deploy from a branch</code>
+                </div>
+            </div>
+            <div class="step">
+                <span class="step-num">3</span>
+                <div>
+                    Branch 选择 <code style="display:inline">main</code> /
+                    <code style="display:inline">/(root)</code> → <strong>Save</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>✅ 完成！</h2>
+            <p style="color:#8b949e; margin-bottom:15px;">等待 1-2 分钟部署完成后，你的网站地址：</p>
+            <code>https://YOUR_USERNAME.github.io/speak-it-out-episode1</code>
+            <p style="margin-top:15px; color:#8b949e;">（替换 YOUR_USERNAME 为你的 GitHub 用户名）</p>
+        </div>
+
+        <div class="note">
+            <strong>📱 学生使用：</strong><br>
+            把链接发给学生，他们打开后滚动到 <strong>Module 01: Word Bank</strong>，
+            点击 <strong>🚀 Start Challenge</strong> 即可开始挑战。
+        </div>
+
+        <div class="divider"></div>
+
+        <p style="color:#8b949e; font-size:13px;">
+            项目文件位于：<code style="display:inline">/Users/chenhong/speak-it-out-project/</code>
+        </p>
+    </div>
+</body>
+</html>

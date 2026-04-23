@@ -85,7 +85,8 @@
     </div>
     <script>
         const LOCAL_KEY = 'speakItOut_global_leaderboard';
-        const API_URL = 'https://speak-it-out.vercel.app/api/leaderboard';
+        // API URL - update after deployment
+        const API_URL = window.location.origin + '/api/leaderboard';
         function getLocal() { const s = localStorage.getItem(LOCAL_KEY); return s ? JSON.parse(s) : [{name:'Sarah M.',time:185,date:'2026-04-22',accuracy:95},{name:'John D.',time:203,date:'2026-04-21',accuracy:88},{name:'Emma L.',time:217,date:'2026-04-23',accuracy:92}]; }
         function formatTime(sec) { const m=Math.floor(sec/60),s=sec%60; return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'); }
         async function submitScore() {
