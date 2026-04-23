@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentence Challenge - Speak It Out</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #000000; --bg-secondary: #161617; --bg-tertiary: #1d1d1f;
+            --text-primary: #f5f5f7; --text-secondary: #a1a1a6; --text-tertiary: #6e6e73;
+            --accent-blue: #2997ff; --accent-green: #30d158; --accent-pink: #ff375f;
+            --border-color: #3a3a3c;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-top: 60px;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            padding: 15px 0;
+        }
+        .top-nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .top-nav-logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        .top-nav-links {
+            display: flex;
+            gap: 15px;
+        }
+        .top-nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 16px;
+            transition: all 0.2s;
+        }
+        .top-nav-links a:hover {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+        .top-nav-links a.active {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+        .back-to-course {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-to-course:hover { color: var(--accent-blue); }
+        .container { max-width: 700px; margin: 0 auto; padding-top: 40px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 2rem; background: linear-gradient(135deg, var(--accent-blue), var(--accent-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .header p { color: var(--text-secondary); margin-top: 8px; }
+
+        .btn {
+            display: inline-block;
+            background: var(--accent-blue);
+            color: #fff;
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+        }
+        .btn:hover { transform: scale(1.02); }
+        .btn-green { background: var(--accent-green); }
+        .btn-secondary { background: var(--bg-tertiary); border: 2px solid var(--border-color); }
+
+        .card {
+            background: var(--bg-tertiary);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .scene-badge { display: inline-block; padding: 6px 14px; background: rgba(41, 151, 255, 0.15); color: var(--accent-blue); border-radius: 20px; font-size: 0.9rem; margin-bottom: 15px; }
+
+        .progress-bar { height: 6px; background: var(--bg-secondary); border-radius: 10px; overflow: hidden; margin: 20px 0; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-blue), var(--accent-green)); transition: width 0.3s; }
+
+        .timer { font-size: 2rem; font-weight: 700; color: var(--accent-green); text-align: center; margin: 20px 0; }
+
+        .word-bank { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; min-height: 80px; margin: 20px 0; padding: 20px; background: var(--bg-secondary); border-radius: 12px; }
+        .word-chip {
+            padding: 12px 20px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .word-chip:hover { border-color: var(--accent-blue); transform: translateY(-2px); }
+        .word-chip.used { opacity: 0.3; pointer-events: none; }
+
+        .answer-area { min-height: 60px; margin: 20px 0; padding: 20px; background: var(--bg-secondary); border-radius: 12px; border: 2px dashed var(--border-color); }
+        .answer-chip {
+            display: inline-block;
+            padding: 10px 18px;
+            background: var(--accent-blue);
+            color: #fff;
+            border-radius: 8px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .hint { color: var(--text-secondary); font-style: italic; margin: 15px 0; padding: 12px; background: rgba(41, 151, 255, 0.1); border-radius: 8px; }
+
+        .feedback { padding: 15px; border-radius: 12px; margin: 15px 0; text-align: center; font-weight: 500; }
+        .feedback.correct { background: rgba(48, 209, 88, 0.15); color: var(--accent-green); }
+        .feedback.incorrect { background: rgba(255, 55, 95, 0.15); color: var(--accent-pink); }
+
+        .check-btn { width: 100%; padding: 15px; background: var(--accent-green); color: #fff; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 600; cursor: pointer; }
+        .check-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--bg-tertiary);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        .modal h2 { margin-bottom: 15px; color: var(--accent-blue); }
+        .modal input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            margin: 20px 0;
+        }
+        .modal-actions { display: flex; gap: 10px; justify-content: center; }
+
+        .result-card { text-align: center; }
+        .result-stat { display: inline-block; margin: 15px 20px; }
+        .result-stat .value { font-size: 3rem; font-weight: 700; color: var(--accent-green); }
+        .result-stat .label { color: var(--text-tertiary); margin-top: 5px; }
+
+        .hidden { display: none; }
+        .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="container">
+            <a href="index.html" class="top-nav-logo">🎓 Speak It Out</a>
+            <div class="top-nav-links">
+                <a href="index.html">📚 Course</a>
+                <a href="challenge.html" class="active">🎮 Challenge</a>
+                <a href="leaderboard.html">🏆 Leaderboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Sentence Challenge</h1>
+            <p>Arrange the words to form correct sentences</p>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="card" style="text-align: center; padding: 50px 30px;">
+            <h2 style="margin-bottom: 15px; color: var(--accent-blue);">Ready?</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 30px;">
+                15 sentences • 5 scenarios<br>
+                Hotel • Airport • Train • Restaurant • Office
+            </p>
+            <button class="btn btn-green" onclick="showNameModal()">🚀 Start Challenge</button>
+        </div>
+
+        <!-- Challenge Screen -->
+        <div id="challengeScreen" class="hidden">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="scene-badge" id="sceneBadge">🏨 Hotel</span>
+                    <span style="color: var(--text-secondary);">
+                        <span id="progressNum">1</span>/15
+                    </span>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+                </div>
+
+                <div class="timer" id="timer">00:00</div>
+
+                <div class="answer-area" id="answerArea">
+                    <span style="color: var(--text-tertiary);">Tap words to build your answer...</span>
+                </div>
+
+                <div class="word-bank" id="wordBank"></div>
+
+                <div class="hint" id="hint">💡 Hint: Loading...</div>
+
+                <button class="check-btn" id="checkBtn" onclick="checkAnswer()">Check Answer</button>
+
+                <div class="feedback hidden" id="feedback"></div>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="resultScreen" class="hidden card result-card">
+            <h2 style="margin-bottom: 25px;">🎉 Challenge Complete!</h2>
+            <div>
+                <div class="result-stat">
+                    <div class="value" id="finalTime">00:00</div>
+                    <div class="label">Time</div>
+                </div>
+                <div class="result-stat">
+                    <div class="value" id="finalAccuracy">0%</div>
+                    <div class="label">Accuracy</div>
+                </div>
+            </div>
+            <p style="color: var(--text-secondary); margin: 25px 0;" id="resultName"></p>
+            <div style="margin-top: 20px;">
+                <button class="btn" onclick="submitToLeaderboard()" style="margin-bottom: 10px;">🏆 Submit Score</button><br>
+                <a href="leaderboard.html" class="btn btn-secondary">📊 View Leaderboard</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Name Modal -->
+    <div class="modal-overlay" id="nameModal">
+        <div class="modal">
+            <h2>👋 Enter Your Name</h2>
+            <input type="text" id="playerName" placeholder="Your name" maxlength="20" onkeypress="if(event.key==='Enter')startChallenge()">
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeNameModal()">Cancel</button>
+                <button class="btn btn-green" onclick="startChallenge()">Start</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase Configuration - Direct API Access
+        const SUPABASE_URL = 'https://eyjrlyrbchkabndsbwrm.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5anJseXJiY2hrYWJuZHNid3JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1NzY4NzcsImV4cCI6MjA2MTE1Mjg3N30.Xz3qJhG6vZ8K9mF4nL2pR5tY7wE1uI0oA3sD6fH8jCk';
+
+        // Get default round name based on date and time
+        function getDefaultRound() {
+            const now = new Date();
+            const date = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            const hour = now.getHours();
+            const period = Math.floor(hour / 4) + 1;
+            return `${date} R${period}`;
+        }
+
+        // 15 sentences - 5 scenarios x 3 levels
+        const sentences = [
+            // Level 1: 3 words
+            { words: ['I', 'have', 'reservation'], correct: 'I have reservation', scene: '🏨 Hotel', hint: 'Subject + Verb + Object' },
+            { words: ['Where', 'is', 'gate'], correct: 'Where is gate', scene: '✈️ Airport', hint: 'Question + be + Place' },
+            { words: ['Ticket', 'please'], correct: 'Ticket please', scene: '🚂 Train', hint: 'Object + please' },
+            // Level 2: 4 words
+            { words: ['I', 'would', 'like', 'water'], correct: 'I would like water', scene: '🍽️ Restaurant', hint: 'Subject + would like + object' },
+            { words: ['Can', 'I', 'help', 'you'], correct: 'Can I help you', scene: '🏢 Office', hint: 'Can + subject + verb + object' },
+            { words: ['Check', 'in', 'now'], correct: 'Check in now', scene: '🏨 Hotel', hint: 'Verb + particle + adverb' },
+            // Level 3: 5 words
+            { words: ['How', 'much', 'does', 'it', 'cost'], correct: 'How much does it cost', scene: '✈️ Airport', hint: 'Question + auxiliary + subject + verb' },
+            { words: ['I', 'need', 'a', 'taxi', 'please'], correct: 'I need a taxi please', scene: '🏨 Hotel', hint: 'Subject + need + object + please' },
+            { words: ['Is', 'this', 'seat', 'taken'], correct: 'Is this seat taken', scene: '🚂 Train', hint: 'Be + subject + past participle' },
+            // Level 4: 6 words
+            { words: ['Could', 'I', 'see', 'the', 'menu', 'please'], correct: 'Could I see the menu please', scene: '🍽️ Restaurant', hint: 'Could + subject + verb + object + please' },
+            { words: ['What', 'time', 'does', 'the', 'train', 'leave'], correct: 'What time does the train leave', scene: '🚂 Train', hint: 'Question + auxiliary + subject + verb' },
+            { words: ['I', 'have', 'a', 'question', 'for', 'you'], correct: 'I have a question for you', scene: '🏢 Office', hint: 'Subject + have + object + preposition' },
+            // Level 5: 7-8 words
+            { words: ['Could', 'you', 'please', 'repeat', 'that', 'again'], correct: 'Could you please repeat that again', scene: '🏢 Office', hint: 'Could + subject + please + verb + adverb' },
+            { words: ['I', 'would', 'like', 'to', 'change', 'my', 'reservation'], correct: 'I would like to change my reservation', scene: '🏨 Hotel', hint: 'Subject + would like + to + verb + possessive' },
+            { words: ['How', 'long', 'will', 'it', 'take', 'to', 'get', 'there'], correct: 'How long will it take to get there', scene: '✈️ Airport', hint: 'Question + auxiliary + subject + verb + infinitive' }
+        ];
+
+        let currentIdx = 0;
+        let currentAnswer = [];
+        let playerName = '';
+        let startTime;
+        let timerInterval;
+        let correctCount = 0;
+        let totalAttempts = 0;
+        let wrongAttemptsOnCurrent = 0; // Track wrong attempts per sentence
+
+        function showNameModal() {
+            document.getElementById('nameModal').classList.add('active');
+            document.getElementById('playerName').focus();
+        }
+
+        function closeNameModal() {
+            document.getElementById('nameModal').classList.remove('active');
+        }
+
+        function startChallenge() {
+            playerName = document.getElementById('playerName').value.trim();
+            if (!playerName) {
+                alert('Please enter your name');
+                return;
+            }
+            closeNameModal();
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('challengeScreen').classList.remove('hidden');
+            startTime = Date.now();
+            startTimer();
+            loadSentence(0);
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const m = Math.floor(elapsed / 60);
+                const s = elapsed % 60;
+                document.getElementById('timer').textContent =
+                    String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+            }, 1000);
+        }
+
+        function loadSentence(idx) {
+            const s = sentences[idx];
+            currentAnswer = [];
+            wrongAttemptsOnCurrent = 0; // Reset wrong attempts for new sentence
+
+            document.getElementById('sceneBadge').textContent = s.scene;
+            document.getElementById('progressNum').textContent = idx + 1;
+            document.getElementById('hint').textContent = '💡 ' + s.hint;
+            document.getElementById('feedback').classList.add('hidden');
+            document.getElementById('checkBtn').disabled = true;
+
+            const progress = ((idx) / sentences.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            // Shuffle words
+            const shuffled = [...s.words].sort(() => Math.random() - 0.5);
+
+            const wordBank = document.getElementById('wordBank');
+            wordBank.innerHTML = '';
+            shuffled.forEach((word, i) => {
+                const chip = document.createElement('span');
+                chip.className = 'word-chip';
+                chip.textContent = word;
+                chip.dataset.word = word;
+                chip.onclick = () => useWord(word, chip);
+                wordBank.appendChild(chip);
+            });
+
+            updateAnswerArea();
+        }
+
+        function useWord(word, chip) {
+            if (chip.classList.contains('used')) return;
+            chip.classList.add('used');
+            currentAnswer.push({ word, chip });
+            updateAnswerArea();
+        }
+
+        function removeFromAnswer(wordChip) {
+            wordChip.classList.remove('used');
+            const idx = currentAnswer.findIndex(item => item.chip === wordChip);
+            if (idx > -1) currentAnswer.splice(idx, 1);
+            updateAnswerArea();
+        }
+
+        function updateAnswerArea() {
+            const answerArea = document.getElementById('answerArea');
+            if (currentAnswer.length === 0) {
+                answerArea.innerHTML = '<span style="color: var(--text-tertiary);">Tap words to build your answer...</span>';
+                document.getElementById('checkBtn').disabled = true;
+            } else {
+                answerArea.innerHTML = '';
+                currentAnswer.forEach(item => {
+                    const chip = document.createElement('span');
+                    chip.className = 'answer-chip';
+                    chip.textContent = item.word;
+                    chip.onclick = () => removeFromAnswer(item.chip);
+                    answerArea.appendChild(chip);
+                });
+                document.getElementById('checkBtn').disabled = false;
+            }
+        }
+
+        function checkAnswer() {
+            const s = sentences[currentIdx];
+            const answer = currentAnswer.map(item => item.word).join(' ');
+            const feedback = document.getElementById('feedback');
+            totalAttempts++;
+
+            if (answer === s.correct) {
+                correctCount++;
+                feedback.className = 'feedback correct';
+                feedback.textContent = '✅ Correct!';
+                feedback.classList.remove('hidden');
+
+                setTimeout(() => {
+                    currentIdx++;
+                    if (currentIdx >= sentences.length) {
+                        endChallenge();
+                    } else {
+                        loadSentence(currentIdx);
+                    }
+                }, 1200);
+            } else {
+                wrongAttemptsOnCurrent++;
+
+                // Check if 3 wrong attempts - offer give up
+                if (wrongAttemptsOnCurrent >= 3) {
+                    feedback.className = 'feedback incorrect';
+                    feedback.innerHTML = `❌ 3 attempts! Give up on this one?
+                        <button onclick="giveUpCurrent()" style="margin-left:10px;padding:8px 16px;background:var(--accent-pink);color:#fff;border:none;border-radius:8px;cursor:pointer;">Give Up</button>
+                        <button onclick="retryCurrent()" style="margin-left:8px;padding:8px 16px;background:var(--accent-blue);color:#fff;border:none;border-radius:8px;cursor:pointer;">Try Again</button>`;
+                    feedback.classList.remove('hidden');
+                } else {
+                    feedback.className = 'feedback incorrect';
+                    feedback.textContent = `❌ Try again! (${wrongAttemptsOnCurrent}/3) ` + s.hint;
+                    feedback.classList.remove('hidden');
+                }
+
+                currentAnswer.forEach(item => item.chip.classList.remove('used'));
+                currentAnswer = [];
+                updateAnswerArea();
+            }
+        }
+
+        function giveUpCurrent() {
+            // Skip to next sentence
+            currentIdx++;
+            if (currentIdx >= sentences.length) {
+                endChallenge();
+            } else {
+                loadSentence(currentIdx);
+            }
+        }
+
+        function retryCurrent() {
+            // Reset attempts and let user try again
+            wrongAttemptsOnCurrent = 0;
+            document.getElementById('feedback').classList.add('hidden');
+        }
+
+        function endChallenge() {
+            clearInterval(timerInterval);
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const accuracy = Math.round((correctCount / totalAttempts) * 100) || 100;
+
+            document.getElementById('challengeScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+
+            const m = Math.floor(elapsed / 60);
+            const s = elapsed % 60;
+            document.getElementById('finalTime').textContent =
+                String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+            document.getElementById('finalAccuracy').textContent = accuracy + '%';
+            document.getElementById('resultName').textContent = playerName;
+
+            window.challengeResult = {
+                name: playerName,
+                time: elapsed,
+                accuracy: accuracy
+            };
+        }
+
+        function submitToLeaderboard() {
+            if (!window.challengeResult) return;
+
+            // Get current round from sessionStorage or create default
+            const currentRound = sessionStorage.getItem('currentRound') || getDefaultRound();
+            window.challengeResult.round = currentRound;
+            window.challengeResult.date = new Date().toISOString().split('T')[0];
+
+            // Save to localStorage first (immediate feedback)
+            const key = 'speakItOut_leaderboard';
+            const scores = JSON.parse(localStorage.getItem(key) || '[]');
+            scores.push({ ...window.challengeResult });
+            localStorage.setItem(key, JSON.stringify(scores));
+
+            // Submit to Supabase
+            fetch(`${SUPABASE_URL}/rest/v1/leaderboard`, {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=representation'
+                },
+                body: JSON.stringify(window.challengeResult)
+            })
+            .then(res => res.ok ? res.json() : Promise.resolve(null))
+            .then(async result => {
+                // Fetch all scores to calculate rank
+                const res2 = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?order=time.asc`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+                const allScores = await res2.json();
+                const rank = allScores.findIndex(s => s.name === window.challengeResult.name && s.time === window.challengeResult.time) + 1;
+                if (rank > 0) {
+                    alert('Score submitted! Your rank: #' + rank);
+                }
+                window.location.href = 'leaderboard.html';
+            })
+            .catch(err => {
+                console.log('API error:', err);
+                alert('Score saved locally!');
+                window.location.href = 'leaderboard.html';
+            });
+        }
+    </script>
+</body>
+</html>

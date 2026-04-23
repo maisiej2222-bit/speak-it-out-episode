@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - Speak It Out</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #000000; --bg-secondary: #161617; --bg-tertiary: #1d1d1f;
+            --text-primary: #f5f5f7; --text-secondary: #a1a1a6; --text-tertiary: #6e6e73;
+            --accent-blue: #2997ff; --accent-green: #30d158; --accent-pink: #ff375f;
+            --border-color: #3a3a3c;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-top: 60px;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            padding: 15px 0;
+        }
+        .top-nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .top-nav-logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        .top-nav-links {
+            display: flex;
+            gap: 15px;
+        }
+        .top-nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 16px;
+            transition: all 0.2s;
+        }
+        .top-nav-links a:hover {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; padding-top: 20px; }
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header p { color: var(--text-secondary); margin-top: 8px; }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(48, 209, 88, 0.1);
+            border: 2px solid var(--accent-green);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--accent-green);
+            margin-top: 15px;
+        }
+        .live-dot {
+            width: 8px; height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .round-selector {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+        .round-btn {
+            flex-shrink: 0;
+            padding: 10px 20px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .round-btn:hover { border-color: var(--accent-blue); }
+        .round-btn.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: #fff;
+        }
+        .round-btn .count {
+            margin-left: 6px;
+            padding: 2px 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .stat-card {
+            background: var(--bg-tertiary);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+        .stat-card .label {
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .leaderboard-card {
+            background: var(--bg-tertiary);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .leaderboard-card h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .refresh-info {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: normal;
+        }
+        .leaderboard-list { list-style: none; }
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            transition: transform 0.2s;
+        }
+        .leaderboard-item:hover { transform: translateX(5px); }
+        .leaderboard-item.new {
+            animation: slideIn 0.5s ease;
+            background: rgba(48, 209, 88, 0.1);
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .rank {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        .rank-1 { background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; }
+        .rank-2 { background: linear-gradient(135deg, #C0C0C0, #808080); color: #000; }
+        .rank-3 { background: linear-gradient(135deg, #CD7F32, #8B4513); color: #fff; }
+        .rank-other { background: var(--bg-tertiary); color: var(--text-secondary); }
+
+        .player-info { flex: 1; min-width: 0; }
+        .player-name {
+            font-weight: 600;
+            font-size: 1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .player-meta {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+            margin-top: 3px;
+        }
+        .player-time {
+            font-weight: 700;
+            color: var(--accent-blue);
+            font-size: 1.1rem;
+            margin-right: 15px;
+        }
+        .player-accuracy {
+            padding: 4px 10px;
+            background: rgba(48, 209, 88, 0.1);
+            color: var(--accent-green);
+            border-radius: 12px;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            background: var(--accent-blue);
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover { transform: scale(1.02); }
+        .btn-green { background: var(--accent-green); color: #000; }
+        .btn-secondary { background: var(--bg-tertiary); border: 2px solid var(--border-color); }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-tertiary);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .btn-group button {
+            flex: 1;
+        }
+
+        .top-nav-links a.active {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .leaderboard-item { flex-wrap: wrap; }
+            .player-time { margin: 10px 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="container">
+            <a href="index.html" class="top-nav-logo">🎓 Speak It Out</a>
+            <div class="top-nav-links">
+                <a href="index.html">📚 Course</a>
+                <a href="challenge.html">🎮 Challenge</a>
+                <a href="leaderboard.html" class="active">🏆 Leaderboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>🏆 Leaderboard</h1>
+            <p>Sentence Challenge Rankings</p>
+            <div class="live-indicator">
+                <span class="live-dot"></span>
+                <span>Live • Updates every 3s</span>
+            </div>
+        </div>
+
+        <!-- Round Selector -->
+        <div class="round-selector" id="roundSelector">
+            <!-- Dynamically populated -->
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value" id="totalPlayers">0</div>
+                <div class="label">Players (Round)</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" id="bestTime">--:--</div>
+                <div class="label">Best Time</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" id="avgAccuracy">0%</div>
+                <div class="label">Avg Accuracy</div>
+            </div>
+        </div>
+
+        <!-- Leaderboard -->
+        <div class="leaderboard-card">
+            <h2>
+                <span id="roundTitle">All Rounds</span>
+                <span class="refresh-info" id="lastUpdate">Updated: --</span>
+            </h2>
+            <ul class="leaderboard-list" id="leaderboardList"></ul>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-secondary" onclick="exportData()">📤 Export</button>
+            <label class="btn btn-secondary" style="cursor:pointer;">
+                📥 Import
+                <input type="file" accept=".json" onchange="importData(this.files[0])" style="display:none;">
+            </label>
+            <button class="btn btn-secondary" onclick="startNewRound()">🔄 New Round</button>
+        </div>
+    </div>
+
+    <script>
+        // Supabase Configuration - Direct API Access
+        const SUPABASE_URL = 'https://eyjrlyrbchkabndsbwrm.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5anJseXJiY2hrYWJuZHNid3JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1NzY4NzcsImV4cCI6MjA2MTE1Mjg3N30.Xz3qJhG6vZ8K9mF4nL2pR5tY7wE1uI0oA3sD6fH8jCk';
+
+        const LOCAL_KEY = 'speakItOut_leaderboard';
+        const ROUNDS_KEY = 'speakItOut_rounds';
+
+        let currentRound = 'all';
+        let leaderboardData = [];
+        let rounds = {};
+
+        function formatTime(sec) {
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+        }
+
+        function getRounds() {
+            const stored = localStorage.getItem(ROUNDS_KEY);
+            if (stored) {
+                try { return JSON.parse(stored); } catch(e) {}
+            }
+            // Auto-generate round name based on date
+            const now = new Date();
+            const date = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            const hour = now.getHours();
+            const period = Math.floor(hour / 4) + 1;
+            return { [`${date} R${period}`]: [] };
+        }
+
+        function saveRounds(data) {
+            localStorage.setItem(ROUNDS_KEY, JSON.stringify(data));
+        }
+
+        function getLocal() {
+            const stored = localStorage.getItem(LOCAL_KEY);
+            if (stored) {
+                try { return JSON.parse(stored); } catch(e) {}
+            }
+            // No mock data - only show real submissions
+            return [];
+        }
+
+        function saveLocal(data) {
+            localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
+        }
+
+        // Get current round name based on time (auto-rotate every 30 min)
+        function getCurrentRoundName() {
+            const now = new Date();
+            const hour = now.getHours();
+            const min = now.getMinutes();
+            const period = Math.floor((hour * 60 + min) / 30);
+            const date = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            return `${date} R${period + 1}`;
+        }
+
+        async function fetchLeaderboard() {
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?order=time.asc`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.length > 0) {
+                        leaderboardData = data;
+                        saveLocal(leaderboardData);
+                        return true;
+                    }
+                }
+            } catch (e) {
+                console.log('API fetch error:', e);
+            }
+            return false;
+        }
+
+        function filterByRound(data, round) {
+            if (round === 'all') return data;
+            return data.filter(e => e.round === round);
+        }
+
+        function getAvailableRounds(data) {
+            const roundMap = {};
+            data.forEach(e => {
+                const r = e.round || 'Unknown';
+                if (!roundMap[r]) roundMap[r] = 0;
+                roundMap[r]++;
+            });
+            return roundMap;
+        }
+
+        function renderRoundSelector(roundMap) {
+            const container = document.getElementById('roundSelector');
+            let html = `<button class="round-btn ${currentRound === 'all' ? 'active' : ''}" onclick="selectRound('all')">All</button>`;
+
+            Object.keys(roundMap).sort().reverse().forEach(round => {
+                const count = roundMap[round];
+                const isActive = currentRound === round;
+                html += `<button class="round-btn ${isActive ? 'active' : ''}" onclick="selectRound('${round}')">
+                    ${round} <span class="count">${count}</span>
+                </button>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function selectRound(round) {
+            currentRound = round;
+            document.getElementById('roundTitle').textContent = round === 'all' ? 'All Rounds' : round;
+            renderLeaderboard();
+            renderRoundSelector(getAvailableRounds(leaderboardData));
+        }
+
+        function renderLeaderboard() {
+            const filtered = filterByRound(leaderboardData, currentRound);
+            const sorted = [...filtered].sort((a, b) => a.time - b.time);
+
+            // Update stats
+            document.getElementById('totalPlayers').textContent = sorted.length;
+            document.getElementById('bestTime').textContent = sorted.length ? formatTime(sorted[0].time) : '--:--';
+            document.getElementById('avgAccuracy').textContent = sorted.length
+                ? Math.round(sorted.reduce((sum, p) => sum + (p.accuracy || 0), 0) / sorted.length) + '%'
+                : '0%';
+
+            // Update last update time
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent = 'Updated: ' + now.toLocaleTimeString();
+
+            // Render list
+            const list = document.getElementById('leaderboardList');
+            list.innerHTML = '';
+
+            if (sorted.length === 0) {
+                list.innerHTML = '<div class="empty-state"><p>No scores yet</p><p style="margin-top:10px;">Be the first to complete the challenge!</p></div>';
+                return;
+            }
+
+            sorted.slice(0, 100).forEach((entry, idx) => {
+                const rankClass = idx < 3 ? 'rank-' + (idx + 1) : 'rank-other';
+                const rankIcon = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '#' + (idx + 1);
+
+                const li = document.createElement('li');
+                li.className = 'leaderboard-item' + (entry.isNew ? ' new' : '');
+                li.innerHTML = `
+                    <div class="rank ${rankClass}">${rankIcon}</div>
+                    <div class="player-info">
+                        <div class="player-name">${escapeHtml(entry.name)}</div>
+                        <div class="player-meta">${entry.date} • ${entry.round || 'Unknown'}</div>
+                    </div>
+                    <div class="player-time">${formatTime(entry.time)}</div>
+                    <div class="player-accuracy">${entry.accuracy}%</div>
+                `;
+                list.appendChild(li);
+
+                // Remove new flag after animation
+                if (entry.isNew) {
+                    setTimeout(() => entry.isNew = false, 500);
+                }
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function exportData() {
+            const data = getLocal();
+            const rounds = getRounds();
+            const exportData = { leaderboard: data, rounds: rounds, exported: new Date().toISOString() };
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'leaderboard-export.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(file) {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.leaderboard && Array.isArray(data.leaderboard)) {
+                        const existing = getLocal();
+                        const merged = [...existing, ...data.leaderboard]
+                            .reduce((acc, curr) => {
+                                const key = curr.name + curr.time + curr.date;
+                                if (!acc.find(e => e.name + e.time + e.date === key)) {
+                                    acc.push(curr);
+                                }
+                                return acc;
+                            }, [])
+                            .sort((a, b) => a.time - b.time)
+                            .slice(0, 100);
+
+                        saveLocal(merged);
+                        leaderboardData = merged;
+
+                        if (data.rounds) {
+                            const currentRounds = getRounds();
+                            Object.keys(data.rounds).forEach(r => {
+                                if (!currentRounds[r]) currentRounds[r] = data.rounds[r];
+                            });
+                            saveRounds(currentRounds);
+                            rounds = currentRounds;
+                        }
+
+                        renderLeaderboard();
+                        renderRoundSelector(getAvailableRounds(merged));
+                        alert('Imported successfully!');
+                    }
+                } catch (err) {
+                    alert('Invalid file');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function startNewRound() {
+            const newRoundName = getCurrentRoundName();
+            const currentRounds = getRounds();
+
+            if (!currentRounds[newRoundName]) {
+                currentRounds[newRoundName] = [];
+                saveRounds(currentRounds);
+                rounds = currentRounds;
+            }
+
+            currentRound = newRoundName;
+            document.getElementById('roundTitle').textContent = newRoundName;
+            renderRoundSelector(getAvailableRounds(leaderboardData));
+            renderLeaderboard();
+
+            // Store current round in sessionStorage for challenge page
+            sessionStorage.setItem('currentRound', newRoundName);
+
+            alert('New round started: ' + newRoundName);
+        }
+
+        // Track new entries
+        let previousCount = 0;
+
+        async function pollUpdates() {
+            // Always merge API data with localStorage for real-time display
+            const apiUpdated = await fetchLeaderboard();
+            const localData = getLocal();
+
+            // Merge API and localStorage data
+            if (apiUpdated && leaderboardData.length > 0) {
+                // Have API data, merge with local
+                const apiNames = leaderboardData.map(e => e.name + e.time + e.date);
+                localData.forEach(entry => {
+                    const key = entry.name + entry.time + entry.date;
+                    if (!apiNames.includes(key)) {
+                        leaderboardData.push(entry);
+                    }
+                });
+                leaderboardData.sort((a, b) => a.time - b.time);
+            } else {
+                // No API, use localStorage only
+                leaderboardData = localData;
+            }
+
+            const currentCount = leaderboardData.length;
+
+            if (currentCount > previousCount) {
+                // Mark new entries
+                const sorted = [...leaderboardData].sort((a, b) => b.time - b.time);
+                sorted.slice(0, currentCount - previousCount).forEach(e => e.isNew = true);
+            }
+
+            previousCount = currentCount;
+            renderLeaderboard();
+            renderRoundSelector(getAvailableRounds(leaderboardData));
+        }
+
+        // Initialize
+        async function init() {
+            rounds = getRounds();
+            const hasApi = await fetchLeaderboard();
+
+            // Always start with localStorage data for real-time display
+            const localData = getLocal();
+
+            if (hasApi && leaderboardData.length > 0) {
+                // Merge API and localStorage
+                const apiNames = leaderboardData.map(e => e.name + e.time + e.date);
+                localData.forEach(entry => {
+                    const key = entry.name + entry.time + entry.date;
+                    if (!apiNames.includes(key)) {
+                        leaderboardData.push(entry);
+                    }
+                });
+                leaderboardData.sort((a, b) => a.time - b.time);
+            } else {
+                // No API data, use localStorage
+                leaderboardData = localData;
+            }
+
+            previousCount = leaderboardData.length;
+            renderRoundSelector(getAvailableRounds(leaderboardData));
+            renderLeaderboard();
+
+            // Poll every 3 seconds
+            setInterval(pollUpdates, 3000);
+        }
+
+        init();
+    </script>
+</body>
+</html>

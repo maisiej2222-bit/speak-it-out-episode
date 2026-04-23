@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play | Speak It Out</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #161617;
+            --bg-tertiary: #1d1d1f;
+            --text-primary: #f5f5f7;
+            --text-secondary: #a1a1a6;
+            --text-tertiary: #6e6e73;
+            --accent-blue: #2997ff;
+            --accent-purple: #bf5af2;
+            --accent-pink: #ff375f;
+            --accent-green: #30d158;
+            --accent-orange: #ff9500;
+            --border-color: #3a3a3c;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            padding: 15px 0;
+        }
+        .top-nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .top-nav-logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        .top-nav-links {
+            display: flex;
+            gap: 25px;
+        }
+        .top-nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+        .top-nav-links a:hover {
+            color: var(--text-primary);
+        }
+        .top-nav-links a.active {
+            color: var(--accent-blue);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding-top: 80px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 60px;
+            max-width: 500px;
+        }
+
+        /* Cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            width: 100%;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-primary);
+            display: block;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 20px 40px rgba(41, 151, 255, 0.15);
+        }
+
+        .card-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .card-badge {
+            display: inline-block;
+            background: rgba(41, 151, 255, 0.15);
+            color: var(--accent-blue);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        .card.challenge .card-badge {
+            background: rgba(255, 149, 0, 0.15);
+            color: var(--accent-orange);
+        }
+
+        .card.leaderboard .card-badge {
+            background: rgba(255, 55, 95, 0.15);
+            color: var(--accent-pink);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .hero p {
+                font-size: 1.1rem;
+            }
+            .card-icon {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="container">
+            <a href="index.html" class="top-nav-logo">🎓 Speak It Out</a>
+            <div class="top-nav-links">
+                <a href="index.html">📚 Course</a>
+                <a href="play.html" class="active">🎮 Play</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="hero">
+        <div class="container">
+            <h1>Choose Your Game</h1>
+            <p>Pick a challenge mode and compete with classmates worldwide!</p>
+
+            <div class="cards">
+                <a href="challenge.html" class="card challenge">
+                    <div class="card-icon">🎯</div>
+                    <h2>Sentence Challenge</h2>
+                    <p>Unscramble 15 sentences across 5 difficulty levels. Race against time and test your grammar skills!</p>
+                    <span class="card-badge">🏆 Compete for fast time</span>
+                </a>
+
+                <a href="leaderboard.html" class="card leaderboard">
+                    <div class="card-icon">🏆</div>
+                    <h2>Leaderboard</h2>
+                    <p>View real-time rankings and see who's on top. Filter by classroom session rounds.</p>
+                    <span class="card-badge">🌍 Global rankings</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>Ready to speak out? <a href="index.html">Back to Course</a></p>
+    </footer>
+</body>
+</html>
