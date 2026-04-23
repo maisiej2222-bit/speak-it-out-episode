@@ -51,9 +51,17 @@ app.post('/api/leaderboard', (req, res) => {
   res.json({ success: true, data: sorted, rank });
 });
 
-// Serve HTML pages
+// Routes
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/challenge', (req, res) => {
+  res.sendFile(path.join(__dirname, 'challenge.html'));
+});
+
+app.get('/challenge.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'challenge.html'));
 });
 
 app.get('/leaderboard.html', (req, res) => {
@@ -62,6 +70,14 @@ app.get('/leaderboard.html', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`🚀 Speak It Out server running on port ${PORT}`);
-  console.log(`📍 Local: http://localhost:${PORT}`);
-  console.log(`🌐 Railway: https://your-app.railway.app`);
+  console.log(``);
+  console.log(`📍 Pages:`);
+  console.log(`   Course (Main): http://localhost:${PORT}/`);
+  console.log(`   Challenge:     http://localhost:${PORT}/challenge.html`);
+  console.log(`   Leaderboard:   http://localhost:${PORT}/leaderboard.html`);
+  console.log(``);
+  console.log(`🌐 Railway URLs (after deployment):`);
+  console.log(`   https://your-app-production.up.railway.app/`);
+  console.log(`   https://your-app-production.up.railway.app/challenge.html`);
+  console.log(`   https://your-app-production.up.railway.app/leaderboard.html`);
 });
