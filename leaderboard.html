@@ -247,6 +247,7 @@
         .btn:hover { transform: scale(1.02); }
         .btn-green { background: var(--accent-green); color: #000; }
         .btn-secondary { background: var(--bg-tertiary); border: 2px solid var(--border-color); }
+        .btn-danger { background: var(--accent-pink); color: #fff; }
 
         .actions {
             display: flex;
@@ -342,13 +343,14 @@
                 <input type="file" accept=".json" onchange="importData(this.files[0])" style="display:none;">
             </label>
             <button class="btn btn-secondary" onclick="startNewRound()">🔄 New Round</button>
+            <button class="btn btn-danger" onclick="deleteAll()">🗑 Delete All</button>
         </div>
     </div>
 
     <script>
         // Supabase Configuration - Direct API Access
         const SUPABASE_URL = 'https://eyjrlyrbchkabndsbwrm.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5anJseXJiY2hrYWJuZHNid3JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1NzY4NzcsImV4cCI6MjA2MTE1Mjg3N30.Xz3qJhG6vZ8K9mF4nL2pR5tY7wE1uI0oA3sD6fH8jCk';
+        const SUPABASE_KEY = 'sb_publishable_Ef-Woa3DNqFwfoswWRv8fg_ygMsxwfm';
 
         const LOCAL_KEY = 'speakItOut_leaderboard';
         const ROUNDS_KEY = 'speakItOut_rounds';
@@ -530,6 +532,50 @@
             URL.revokeObjectURL(url);
         }
 
+        async function deleteAll() {
+            if (!confirm('Are you sure you want to delete ALL scores? This cannot be undone!')) return;
+            if (!confirm('This will permanently delete all leaderboard data. Continue?')) return;
+
+            try {
+                // Delete ALL records from Supabase using service key
+                // Since anon key can't DELETE, try deleting one by one
+                const allScores = await getLeaderboardFromAPI();
+                if (allScores && allScores.length > 0) {
+                    for (const score of allScores) {
+                        await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?id=eq.${score.id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'apikey': SUPABASE_KEY,
+                                'Authorization': `Bearer ${SUPABASE_KEY}`
+                            }
+                        });
+                    }
+                }
+                // Also clear localStorage
+                localStorage.setItem(LOCAL_KEY, '[]');
+                leaderboardData = [];
+                previousCount = 0;
+                renderLeaderboard();
+                renderRoundSelector(getAvailableRounds([]));
+                alert('All scores deleted!');
+            } catch (e) {
+                alert('Delete failed. Try using the SQL Editor in Supabase: DELETE FROM leaderboard;');
+                console.error(e);
+            }
+        }
+
+        async function getLeaderboardFromAPI() {
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?select=id`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+                return res.ok ? await res.json() : [];
+            } catch (e) { return []; }
+        }
+
         function importData(file) {
             const reader = new FileReader();
             reader.onload = async (e) => {
@@ -664,3 +710,4 @@
     </script>
 </body>
 </html>
+ 
