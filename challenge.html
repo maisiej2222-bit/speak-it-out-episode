@@ -189,27 +189,28 @@
         <div class="container">
             <a href="index.html" class="top-nav-logo">🎓 Speak It Out</a>
             <div class="top-nav-links">
-                <a href="index.html">📚 Course</a>
-                <a href="challenge.html" class="active">🎮 Challenge</a>
-                <a href="leaderboard.html">🏆 Leaderboard</a>
+                <a href="index.html">📚 课程 / Course</a>
+                <a href="challenge.html" class="active">🎮 挑战 / Challenge</a>
+                <a href="leaderboard.html">🏆 排行 / Leaderboard</a>
             </div>
         </div>
     </nav>
 
     <div class="container">
         <div class="header">
-            <h1>🎯 Sentence Challenge</h1>
-            <p>Arrange the words to form correct sentences</p>
+            <h1>🎯 句子挑战 / Sentence Challenge</h1>
+            <p>排列单词组成正确句子 / Arrange the words to form correct sentences</p>
         </div>
 
         <!-- Start Screen -->
         <div id="startScreen" class="card" style="text-align: center; padding: 50px 30px;">
-            <h2 style="margin-bottom: 15px; color: var(--accent-blue);">Ready?</h2>
+            <h2 style="margin-bottom: 15px; color: var(--accent-blue);">Ready? 准备好了吗？</h2>
             <p style="color: var(--text-secondary); margin-bottom: 30px;">
-                15 sentences • 5 scenarios<br>
-                Hotel • Airport • Train • Restaurant • Office
+                随机15句 / 15 random sentences<br>
+                每次都不一样 / Different every time<br><br>
+                🏨 Hotel · ✈️ Airport · 🚂 Train · 🍽️ Restaurant · 🏢 Office
             </p>
-            <button class="btn btn-green" onclick="showNameModal()">🚀 Start Challenge</button>
+            <button class="btn btn-green" onclick="showNameModal()">🚀 开始挑战 / Start Challenge</button>
         </div>
 
         <!-- Challenge Screen -->
@@ -229,7 +230,7 @@
                 <div class="timer" id="timer">00:00</div>
 
                 <div class="answer-area" id="answerArea">
-                    <span style="color: var(--text-tertiary);">Tap words to build your answer...</span>
+                    <span style="color: var(--text-tertiary);">点击单词组成句子 / Tap words to build your answer...</span>
                 </div>
 
                 <div class="word-bank" id="wordBank"></div>
@@ -244,21 +245,21 @@
 
         <!-- Result Screen -->
         <div id="resultScreen" class="hidden card result-card">
-            <h2 style="margin-bottom: 25px;">🎉 Challenge Complete!</h2>
+            <h2 style="margin-bottom: 25px;">🎉 挑战完成！/ Challenge Complete!</h2>
             <div>
                 <div class="result-stat">
                     <div class="value" id="finalTime">00:00</div>
-                    <div class="label">Time</div>
+                    <div class="label">用时 / Time</div>
                 </div>
                 <div class="result-stat">
                     <div class="value" id="finalAccuracy">0%</div>
-                    <div class="label">Accuracy</div>
+                    <div class="label">正确率 / Accuracy</div>
                 </div>
             </div>
             <p style="color: var(--text-secondary); margin: 25px 0;" id="resultName"></p>
             <div style="margin-top: 20px;">
-                <button class="btn" onclick="submitToLeaderboard()" style="margin-bottom: 10px;">🏆 Submit Score</button><br>
-                <a href="leaderboard.html" class="btn btn-secondary">📊 View Leaderboard</a>
+                <button class="btn" onclick="submitToLeaderboard()" style="margin-bottom: 10px;">🏆 提交成绩 / Submit Score</button><br>
+                <a href="leaderboard.html" class="btn btn-secondary">📊 查看排行榜 / View Leaderboard</a>
             </div>
         </div>
     </div>
@@ -266,11 +267,11 @@
     <!-- Name Modal -->
     <div class="modal-overlay" id="nameModal">
         <div class="modal">
-            <h2>👋 Enter Your Name</h2>
-            <input type="text" id="playerName" placeholder="Your name" maxlength="20" onkeypress="if(event.key==='Enter')startChallenge()">
+            <h2>👋 输入你的名字 / Enter Your Name</h2>
+            <input type="text" id="playerName" placeholder="你的名字 / Your name" maxlength="20" onkeypress="if(event.key==='Enter')startChallenge()">
             <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="closeNameModal()">Cancel</button>
-                <button class="btn btn-green" onclick="startChallenge()">Start</button>
+                <button class="btn btn-secondary" onclick="closeNameModal()">取消 / Cancel</button>
+                <button class="btn btn-green" onclick="startChallenge()">开始 / Start</button>
             </div>
         </div>
     </div>
@@ -289,29 +290,56 @@
             return `${date} R${period}`;
         }
 
-        // 15 sentences - 5 scenarios x 3 levels
-        const sentences = [
-            // Level 1: 3 words
-            { words: ['I', 'have', 'reservation'], correct: 'I have reservation', scene: '🏨 Hotel', hint: 'Subject + Verb + Object' },
-            { words: ['Where', 'is', 'gate'], correct: 'Where is gate', scene: '✈️ Airport', hint: 'Question + be + Place' },
-            { words: ['Ticket', 'please'], correct: 'Ticket please', scene: '🚂 Train', hint: 'Object + please' },
-            // Level 2: 4 words
-            { words: ['I', 'would', 'like', 'water'], correct: 'I would like water', scene: '🍽️ Restaurant', hint: 'Subject + would like + object' },
-            { words: ['Can', 'I', 'help', 'you'], correct: 'Can I help you', scene: '🏢 Office', hint: 'Can + subject + verb + object' },
-            { words: ['Check', 'in', 'now'], correct: 'Check in now', scene: '🏨 Hotel', hint: 'Verb + particle + adverb' },
-            // Level 3: 5 words
-            { words: ['How', 'much', 'does', 'it', 'cost'], correct: 'How much does it cost', scene: '✈️ Airport', hint: 'Question + auxiliary + subject + verb' },
-            { words: ['I', 'need', 'a', 'taxi', 'please'], correct: 'I need a taxi please', scene: '🏨 Hotel', hint: 'Subject + need + object + please' },
-            { words: ['Is', 'this', 'seat', 'taken'], correct: 'Is this seat taken', scene: '🚂 Train', hint: 'Be + subject + past participle' },
-            // Level 4: 6 words
-            { words: ['Could', 'I', 'see', 'the', 'menu', 'please'], correct: 'Could I see the menu please', scene: '🍽️ Restaurant', hint: 'Could + subject + verb + object + please' },
-            { words: ['What', 'time', 'does', 'the', 'train', 'leave'], correct: 'What time does the train leave', scene: '🚂 Train', hint: 'Question + auxiliary + subject + verb' },
-            { words: ['I', 'have', 'a', 'question', 'for', 'you'], correct: 'I have a question for you', scene: '🏢 Office', hint: 'Subject + have + object + preposition' },
-            // Level 5: 7-8 words
-            { words: ['Could', 'you', 'please', 'repeat', 'that', 'again'], correct: 'Could you please repeat that again', scene: '🏢 Office', hint: 'Could + subject + please + verb + adverb' },
-            { words: ['I', 'would', 'like', 'to', 'change', 'my', 'reservation'], correct: 'I would like to change my reservation', scene: '🏨 Hotel', hint: 'Subject + would like + to + verb + possessive' },
-            { words: ['How', 'long', 'will', 'it', 'take', 'to', 'get', 'there'], correct: 'How long will it take to get there', scene: '✈️ Airport', hint: 'Question + auxiliary + subject + verb + infinitive' }
+        // 30+ sentence pool - 随机抽取15句 / Random 15 drawn each game
+        const SENTENCE_POOL = [
+            // Level 1: 3-4 words (Easy)
+            { words: ['I', 'have', 'reservation'], correct: 'I have reservation', scene: '🏨 Hotel', hint: '主+动+宾 / Subject + Verb + Object' },
+            { words: ['Where', 'is', 'gate'], correct: 'Where is gate', scene: '✈️ Airport', hint: '疑问+be+地点 / Question + be + Place' },
+            { words: ['Ticket', 'please'], correct: 'Ticket please', scene: '🚂 Train', hint: '名词+please / Object + please' },
+            { words: ['I', 'am', 'lost'], correct: 'I am lost', scene: '✈️ Airport', hint: '主+be+形 / Subject + be + adjective' },
+            { words: ['Can', 'I', 'sit', 'here'], correct: 'Can I sit here', scene: '🚂 Train', hint: 'Can+主+动 / Can + subject + verb' },
+            { words: ['What', 'is', 'this'], correct: 'What is this', scene: '🍽️ Restaurant', hint: '疑问+be / Question + be' },
+            // Level 2: 4-5 words (Easy-Medium)
+            { words: ['I', 'would', 'like', 'water'], correct: 'I would like water', scene: '🍽️ Restaurant', hint: 'I would like + 名词 / Subject + would like + object' },
+            { words: ['Can', 'I', 'help', 'you'], correct: 'Can I help you', scene: '🏢 Office', hint: 'Can+主+动+宾 / Can + subject + verb + object' },
+            { words: ['Check', 'in', 'please'], correct: 'Check in please', scene: '🏨 Hotel', hint: '动词+please / Verb + please' },
+            { words: ['I', 'need', 'a', 'taxi'], correct: 'I need a taxi', scene: '🏨 Hotel', hint: '主+need+宾 / Subject + need + object' },
+            { words: ['Is', 'this', 'seat', 'taken'], correct: 'Is this seat taken', scene: '🚂 Train', hint: 'Be+主+过分 / Be + subject + past participle' },
+            { words: ['How', 'much', 'is', 'it'], correct: 'How much is it', scene: '🍽️ Restaurant', hint: '多少钱 / How much + be + subject' },
+            { words: ['What', 'time', 'is', 'it'], correct: 'What time is it', scene: '🏢 Office', hint: '几点 / What time + be + subject' },
+            // Level 3: 5-6 words (Medium)
+            { words: ['How', 'much', 'does', 'it', 'cost'], correct: 'How much does it cost', scene: '✈️ Airport', hint: '疑问+助动+主+动 / Question + auxiliary + subject + verb' },
+            { words: ['I', 'need', 'a', 'taxi', 'please'], correct: 'I need a taxi please', scene: '🏨 Hotel', hint: '我需要一辆出租车 / Subject + need + object + please' },
+            { words: ['Could', 'I', 'see', 'the', 'menu'], correct: 'Could I see the menu', scene: '🍽️ Restaurant', hint: '能看菜单吗 / Could + subject + verb + object' },
+            { words: ['What', 'time', 'does', 'train', 'leave'], correct: 'What time does train leave', scene: '🚂 Train', hint: '火车几点开 / Question + auxiliary + subject + verb' },
+            { words: ['Where', 'is', 'the', 'bus', 'stop'], correct: 'Where is the bus stop', scene: '✈️ Airport', hint: '公交站在哪 / Where + be + subject' },
+            { words: ['I', 'have', 'a', 'question', 'for', 'you'], correct: 'I have a question for you', scene: '🏢 Office', hint: '我有个问题问你 / Subject + have + object + preposition' },
+            // Level 4: 6-7 words (Medium-Hard)
+            { words: ['Could', 'I', 'see', 'the', 'menu', 'please'], correct: 'Could I see the menu please', scene: '🍽️ Restaurant', hint: '请给我看菜单 / Could + subject + verb + object + please' },
+            { words: ['What', 'time', 'does', 'the', 'train', 'leave'], correct: 'What time does the train leave', scene: '🚂 Train', hint: '火车什么时候出发 / Question + auxiliary + subject + verb' },
+            { words: ['Could', 'you', 'please', 'repeat', 'that'], correct: 'Could you please repeat that', scene: '🏢 Office', hint: '请重复一遍 / Could + subject + please + verb' },
+            { words: ['I', 'would', 'like', 'to', 'check', 'out'], correct: 'I would like to check out', scene: '🏨 Hotel', hint: '我想退房 / Subject + would like + to + verb' },
+            { words: ['Can', 'you', 'tell', 'me', 'the', 'way'], correct: 'Can you tell me the way', scene: '✈️ Airport', hint: '能告诉我路吗 / Can + subject + verb + indirect + object' },
+            { words: ['Is', 'there', 'a', 'pharmacy', 'near', 'here'], correct: 'Is there a pharmacy near here', scene: '🏨 Hotel', hint: '附近有药店吗 / Is there + subject + location' },
+            { words: ['I', 'would', 'like', 'to', 'make', 'a', 'booking'], correct: 'I would like to make a booking', scene: '🍽️ Restaurant', hint: '我想预订 / Subject + would like + to + verb + object' },
+            // Level 5: 7-8 words (Hard)
+            { words: ['Could', 'you', 'please', 'repeat', 'that', 'again'], correct: 'Could you please repeat that again', scene: '🏢 Office', hint: '请再说一遍 / Could + subject + please + verb + adverb' },
+            { words: ['I', 'would', 'like', 'to', 'change', 'my', 'reservation'], correct: 'I would like to change my reservation', scene: '🏨 Hotel', hint: '我想改预订 / Subject + would like + to + verb + possessive' },
+            { words: ['How', 'long', 'will', 'it', 'take', 'to', 'get', 'there'], correct: 'How long will it take to get there', scene: '✈️ Airport', hint: '多久能到 / Question + auxiliary + subject + verb + infinitive' },
+            { words: ['I', 'would', 'like', 'to', 'store', 'my', 'luggage'], correct: 'I would like to store my luggage', scene: '🏨 Hotel', hint: '我想寄存行李 / Subject + would like + to + verb + possessive' },
+            { words: ['Could', 'you', 'help', 'me', 'find', 'my', 'bag'], correct: 'Could you help me find my bag', scene: '✈️ Airport', hint: '能帮我找包吗 / Could + subject + verb + object + infinitive' },
+            { words: ['I', 'need', 'to', 'cancel', 'the', 'meeting', 'tomorrow'], correct: 'I need to cancel the meeting tomorrow', scene: '🏢 Office', hint: '我需要取消明天的会议 / Subject + need + to + verb + object + time' },
+            { words: ['Is', 'it', 'possible', 'to', 'get', 'a', 'refund'], correct: 'Is it possible to get a refund', scene: '✈️ Airport', hint: '可以退款吗 / Is it possible + to + verb + object' },
+            { words: ['The', 'room', 'is', 'too', 'noisy', 'for', 'me'], correct: 'The room is too noisy for me', scene: '🏨 Hotel', hint: '房间太吵了 / Subject + be + too + adjective + preposition' },
         ];
+
+        // Get 15 random unique sentences from pool
+        function getRandomSentences(count = 15) {
+            const shuffled = [...SENTENCE_POOL].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, Math.min(count, shuffled.length));
+        }
+
+        let sentences = []; // Will be populated at game start
 
         let currentIdx = 0;
         let currentAnswer = [];
@@ -334,9 +362,13 @@
         function startChallenge() {
             playerName = document.getElementById('playerName').value.trim();
             if (!playerName) {
-                alert('Please enter your name');
+                alert('请输入名字 / Please enter your name');
                 return;
             }
+            sentences = getRandomSentences(15);
+            currentIdx = 0;
+            correctCount = 0;
+            totalAttempts = 0;
             closeNameModal();
             document.getElementById('startScreen').classList.add('hidden');
             document.getElementById('challengeScreen').classList.remove('hidden');
@@ -403,7 +435,7 @@
         function updateAnswerArea() {
             const answerArea = document.getElementById('answerArea');
             if (currentAnswer.length === 0) {
-                answerArea.innerHTML = '<span style="color: var(--text-tertiary);">Tap words to build your answer...</span>';
+                answerArea.innerHTML = '<span style="color: var(--text-tertiary);">点击单词组成句子 / Tap words to build your answer...</span>';
                 document.getElementById('checkBtn').disabled = true;
             } else {
                 answerArea.innerHTML = '';
@@ -427,7 +459,7 @@
             if (answer === s.correct) {
                 correctCount++;
                 feedback.className = 'feedback correct';
-                feedback.textContent = '✅ Correct!';
+                feedback.textContent = '✅ 正确！/ Correct!';
                 feedback.classList.remove('hidden');
 
                 setTimeout(() => {
@@ -444,13 +476,13 @@
                 // Check if 3 wrong attempts - offer give up
                 if (wrongAttemptsOnCurrent >= 3) {
                     feedback.className = 'feedback incorrect';
-                    feedback.innerHTML = `❌ 3 attempts! Give up on this one?
-                        <button onclick="giveUpCurrent()" style="margin-left:10px;padding:8px 16px;background:var(--accent-pink);color:#fff;border:none;border-radius:8px;cursor:pointer;">Give Up</button>
-                        <button onclick="retryCurrent()" style="margin-left:8px;padding:8px 16px;background:var(--accent-blue);color:#fff;border:none;border-radius:8px;cursor:pointer;">Try Again</button>`;
+                    feedback.innerHTML = `❌ 已尝试3次！放弃这题？ / 3 attempts! Give up?
+                        <button onclick="giveUpCurrent()" style="margin-left:10px;padding:8px 16px;background:var(--accent-pink);color:#fff;border:none;border-radius:8px;cursor:pointer;">放弃 / Give Up</button>
+                        <button onclick="retryCurrent()" style="margin-left:8px;padding:8px 16px;background:var(--accent-blue);color:#fff;border:none;border-radius:8px;cursor:pointer;">再试 / Try Again</button>`;
                     feedback.classList.remove('hidden');
                 } else {
                     feedback.className = 'feedback incorrect';
-                    feedback.textContent = `❌ Try again! (${wrongAttemptsOnCurrent}/3) ` + s.hint;
+                    feedback.textContent = `❌ 再试试！(${wrongAttemptsOnCurrent}/3) / Try again! ` + s.hint;
                     feedback.classList.remove('hidden');
                 }
 
@@ -535,7 +567,7 @@
                 const allScores = await res2.json();
                 const rank = allScores.findIndex(s => s.name === window.challengeResult.name && s.time === window.challengeResult.time) + 1;
                 if (rank > 0) {
-                    alert('Score submitted! Your rank: #' + rank);
+                    alert('成绩已提交！排名 / Score submitted! Rank: #' + rank);
                 }
                 window.location.href = 'leaderboard.html';
             })
