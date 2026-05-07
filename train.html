@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Game - Speak It Out</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #000000; --bg-secondary: #161617; --bg-tertiary: #1d1d1f;
+            --text-primary: #f5f5f7; --text-secondary: #a1a1a6; --text-tertiary: #6e6e73;
+            --accent-blue: #2997ff; --accent-purple: #bf5af2; --accent-pink: #ff375f;
+            --accent-green: #30d158; --accent-orange: #ff9500;
+            --border-color: #3a3a3c;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-primary); color: var(--text-primary);
+            min-height: 100vh; padding-top: 60px;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            position: fixed; top: 0; left: 0; right: 0;
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000; padding: 15px 0;
+        }
+        .top-nav .container {
+            display: flex; justify-content: space-between; align-items: center;
+            max-width: 800px; margin: 0 auto; padding: 0 20px;
+        }
+        .top-nav-logo {
+            font-weight: 700; font-size: 1.2rem; color: var(--text-primary); text-decoration: none;
+        }
+        .top-nav-links { display: flex; gap: 15px; }
+        .top-nav-links a {
+            color: var(--text-secondary); text-decoration: none;
+            font-size: 0.9rem; padding: 6px 12px; border-radius: 16px; transition: all 0.2s;
+        }
+        .top-nav-links a:hover { background: var(--accent-blue); color: #fff; }
+        .top-nav-links a.active { background: var(--accent-blue); color: #fff; }
+
+        .container { max-width: 700px; margin: 0 auto; padding: 20px; }
+
+        /* Header */
+        .header { text-align: center; padding: 40px 20px; }
+        .header h1 {
+            font-size: 2.5rem; font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .header p { color: var(--text-secondary); margin-top: 8px; font-size: 1.1rem; }
+        .header .zh { color: var(--text-tertiary); font-size: 0.95rem; margin-top: 4px; }
+
+        /* Train Game Area */
+        .train-card {
+            background: var(--bg-tertiary); border-radius: 24px; padding: 50px 30px;
+            text-align: center; border: 1px solid var(--border-color);
+        }
+
+        .counter-row {
+            display: flex; justify-content: center; gap: 40px; margin-bottom: 30px; flex-wrap: wrap;
+        }
+        .counter-item { text-align: center; }
+        .counter-value {
+            font-size: 3rem; font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .counter-label { color: var(--text-tertiary); font-size: 0.85rem; margin-top: 4px; }
+
+        .word-display {
+            background: var(--bg-secondary); border-radius: 20px; padding: 40px;
+            margin: 30px 0; border: 2px solid var(--border-color);
+            min-height: 140px; display: flex; align-items: center; justify-content: center;
+        }
+        .word-text {
+            font-size: 3.5rem; font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            transition: all 0.3s;
+        }
+        .word-text.placeholder { font-size: 1.5rem; color: var(--text-tertiary); -webkit-text-fill-color: var(--text-tertiary); }
+
+        .hint-text { color: var(--text-tertiary); font-size: 0.9rem; margin-bottom: 25px; }
+
+        .btn-row { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .btn {
+            padding: 15px 35px; border-radius: 50px; font-size: 1.05rem;
+            font-weight: 600; cursor: pointer; border: none; transition: all 0.3s;
+        }
+        .btn:hover { transform: scale(1.03); }
+        .btn-next {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: #fff;
+        }
+        .btn-speak {
+            background: var(--accent-green); color: #000;
+        }
+        .btn-speak:hover { box-shadow: 0 8px 30px rgba(48,209,88,0.3); }
+        .btn-reset {
+            background: transparent; border: 2px solid var(--border-color); color: var(--text-secondary);
+        }
+
+        .streak-badge {
+            display: inline-block; padding: 8px 20px; border-radius: 20px;
+            background: rgba(255,149,0,0.15); color: var(--accent-orange);
+            font-weight: 700; font-size: 0.9rem; margin-top: 20px;
+            transition: all 0.3s;
+        }
+        .streak-badge.hidden { opacity: 0; }
+
+        /* Confetti */
+        @keyframes fall { to { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+
+        @media (max-width: 600px) {
+            .word-text { font-size: 2.2rem; }
+            .header h1 { font-size: 1.8rem; }
+            .counter-value { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="container">
+            <a href="index.html" class="top-nav-logo">🎓 Speak It Out</a>
+            <div class="top-nav-links">
+                <a href="index.html">📚 课程 / Course</a>
+                <a href="play.html">🎮 游戏 / Play</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>🚂 Train Game 脱口而出</h1>
+            <p>One word. One sentence. No limits.</p>
+            <p class="zh">看到一个词，立刻说出一个完整句子。不要思考，脱口而出！</p>
+        </div>
+
+        <div class="train-card">
+            <div class="counter-row">
+                <div class="counter-item">
+                    <div class="counter-value" id="speakCount">0</div>
+                    <div class="counter-label">已开口 / Spoken</div>
+                </div>
+                <div class="counter-item">
+                    <div class="counter-value" id="streakCount">0</div>
+                    <div class="counter-label">连续 / Streak</div>
+                </div>
+            </div>
+
+            <div class="word-display">
+                <div class="word-text placeholder" id="trainWord">点击下方按钮开始 / Click to Start</div>
+            </div>
+
+            <p class="hint-text" id="hintText">💡 看到单词后，大声说出一个完整句子 / See a word, speak a full sentence</p>
+
+            <div class="btn-row">
+                <button class="btn btn-next" onclick="nextWord()">🎲 下一个词 / Next Word</button>
+                <button class="btn btn-speak" onclick="speakWord()">🔊 TTS 朗读 / Speak</button>
+                <button class="btn btn-reset" onclick="resetGame()">↺ 重置 / Reset</button>
+            </div>
+
+            <div class="streak-badge hidden" id="streakBadge">🔥 连续5个！/ 5 Streak!</div>
+        </div>
+    </div>
+
+    <script>
+        const trainWords = [
+            'boarding pass','departure','upgrade','lounge','compensation','voucher',
+            'itinerary','layover','standby','complimentary','reservation','amenities',
+            'confirmation','express','membership','benefits','luggage allowance',
+            'priority boarding','check-in','delayed','cancelled','reschedule',
+            'apologize','describe','request','announcement','connecting flight',
+            'passport control','customs','duty-free','one-way ticket','round trip',
+            'window seat','aisle seat','emergency exit','overhead bin','seat belt',
+            'take off','landing','gate number','terminal','shuttle bus','concierge',
+            'room service','housekeeping','wake-up call','do not disturb','suite',
+            'buffet','continental breakfast','all-inclusive','tip','currency exchange'
+        ];
+
+        let speakCount = 0;
+        let streak = 0;
+        let lastIdx = -1;
+
+        function nextWord() {
+            let idx;
+            do { idx = Math.floor(Math.random() * trainWords.length); }
+            while (idx === lastIdx && trainWords.length > 1);
+            lastIdx = idx;
+
+            const wordEl = document.getElementById('trainWord');
+            wordEl.textContent = trainWords[idx];
+            wordEl.classList.remove('placeholder');
+            wordEl.style.animation = 'none';
+            wordEl.offsetHeight;
+            wordEl.style.animation = '';
+
+            speakCount++;
+            streak++;
+            updateCounters();
+            updateStreakBadge();
+
+            document.getElementById('hintText').innerHTML =
+                '💡 用「<strong>' + trainWords[idx] + '</strong>」说一个完整句子 / Speak a complete sentence';
+        }
+
+        function speakWord() {
+            const word = document.getElementById('trainWord').textContent;
+            if (word === '点击下方按钮开始 / Click to Start') return;
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(word);
+                u.lang = 'en-US'; u.rate = 0.85;
+                speechSynthesis.speak(u);
+            }
+        }
+
+        function updateCounters() {
+            document.getElementById('speakCount').textContent = speakCount;
+            document.getElementById('streakCount').textContent = streak;
+            if (speakCount >= 10) createConfetti();
+        }
+
+        function updateStreakBadge() {
+            const badge = document.getElementById('streakBadge');
+            if (streak >= 5 && streak % 5 === 0) {
+                badge.classList.remove('hidden');
+                badge.textContent = '🔥 连续' + streak + '个！/ ' + streak + ' Streak!';
+                createConfetti();
+            } else if (streak < 5) {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function resetGame() {
+            speakCount = 0;
+            streak = 0;
+            lastIdx = -1;
+            document.getElementById('speakCount').textContent = '0';
+            document.getElementById('streakCount').textContent = '0';
+            document.getElementById('trainWord').textContent = '点击下方按钮开始 / Click to Start';
+            document.getElementById('trainWord').classList.add('placeholder');
+            document.getElementById('hintText').innerHTML = '💡 看到单词后，大声说出一个完整句子 / See a word, speak a full sentence';
+            document.getElementById('streakBadge').classList.add('hidden');
+        }
+
+        function createConfetti() {
+            const colors = ['#2997ff','#bf5af2','#ff375f','#30d158','#ff9500'];
+            for (let i=0;i<50;i++) {
+                const el = document.createElement('div');
+                el.style.cssText = 'position:fixed;left:'+Math.random()*100+'vw;top:-10px;width:8px;height:8px;background:'+
+                    colors[Math.floor(Math.random()*colors.length)]+';border-radius:50%;animation:fall '+
+                    (2+Math.random()*2)+'s linear forwards;z-index:9999;pointer-events:none;';
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 4000);
+            }
+        }
+    </script>
+</body>
+</html>
