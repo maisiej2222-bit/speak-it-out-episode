@@ -202,16 +202,48 @@
             background: var(--bg-tertiary); padding: 8px 16px; border-radius: 20px;
             font-size: 0.9rem; color: var(--text-secondary); border: 1px solid var(--border-color);
         }
+        .summary-hint-box {
+            background: var(--bg-secondary); border-radius: 16px; padding: 25px;
+            margin-bottom: 20px; border: 1px solid var(--border-color);
+        }
+        .summary-label {
+            font-weight: 700; color: var(--accent-blue); margin-bottom: 12px; font-size: 1.05rem;
+        }
+        .summary-en { color: var(--text-secondary); line-height: 1.7; margin-bottom: 8px; font-size: 0.95rem; }
+        .summary-zh { color: var(--text-tertiary); line-height: 1.7; font-size: 0.9rem; }
+        .ref-link-btn {
+            display: inline-block; padding: 12px 24px; background: rgba(255,55,95,0.1);
+            border: 1px solid var(--accent-pink); border-radius: 12px;
+            color: var(--accent-pink); text-decoration: none;
+            font-size: 0.9rem; font-weight: 600; transition: all 0.2s;
+        }
+        .ref-link-btn:hover { background: rgba(255,55,95,0.2); transform: translateY(-2px); }
 
-        /* Module 3: Train Game */
+        /* Module 3: Sentence Train */
         .train-area { margin-top: 40px; text-align: center; }
-        .train-word {
-            font-size: 4rem; font-weight: 700; margin: 30px 0;
+        .train-sentence {
+            font-size: 1.8rem; font-weight: 700; margin: 20px 0; padding: 25px;
+            background: var(--bg-secondary); border-radius: 16px;
+            border: 2px solid var(--border-color);
             background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            min-height: 60px; display: flex; align-items: center; justify-content: center;
         }
-        .train-counter { font-size: 1rem; color: var(--text-tertiary); margin-bottom: 20px; }
-        .train-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .train-counter { font-size: 1rem; color: var(--text-tertiary); margin-bottom: 15px; }
+        .hint-text { color: var(--text-tertiary); font-size: 0.9rem; }
+        .detail-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+        .detail-btn {
+            background: var(--bg-tertiary); border: 2px solid var(--border-color);
+            color: var(--text-primary); padding: 10px 20px; border-radius: 25px;
+            font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.2s;
+        }
+        .detail-btn:hover { transform: translateY(-2px); }
+        .detail-btn.when:hover { border-color: var(--accent-blue); background: rgba(41,151,255,0.1); }
+        .detail-btn.where:hover { border-color: var(--accent-green); background: rgba(48,209,88,0.1); }
+        .detail-btn.why:hover { border-color: var(--accent-orange); background: rgba(255,149,0,0.1); }
+        .detail-btn.how:hover { border-color: var(--accent-purple); background: rgba(191,90,242,0.1); }
+        .detail-btn.who:hover { border-color: var(--accent-pink); background: rgba(255,55,95,0.1); }
+        .train-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
         .train-btn {
             background: var(--bg-tertiary); border: 2px solid var(--border-color);
             color: var(--text-primary); padding: 12px 30px; border-radius: 50px;
@@ -297,7 +329,7 @@
             <a href="index.html" class="top-nav-logo">🎓 Speak It Out 说出口</a>
             <div class="top-nav-links">
                 <a href="index.html" class="active">📚 Course 课程</a>
-                <a href="train.html">🚂 脱口而出 / Train</a>
+                <a href="train.html">🚂 Speak It Out</a>
                 <a href="play.html">🎮 Play 游戏</a>
             </div>
         </div>
@@ -368,21 +400,31 @@
         </div>
     </section>
 
-    <!-- Module 3: Train Game -->
+    <!-- Module 3: Sentence Train -->
     <section class="module" id="module3">
         <div class="container">
             <div class="module-header">
                 <span class="module-number">Module 3</span>
-                <h2>Train Game 脱口而出</h2>
-                <p class="subtitle">One word. One sentence. No limits.</p>
-                <p class="subtitle-zh">看到一个词，立刻说出一个句子。不要停。</p>
+                <h2>开火车 / Sentence Train</h2>
+                <p class="subtitle">Each person adds one detail. Build it together.</p>
+                <p class="subtitle-zh">像开火车一样，每个人往句子里添加一个细节，越说越完整。</p>
             </div>
             <div class="train-area">
-                <div class="train-counter"><span id="trainCount">0</span> speaks 已开口</div>
-                <div class="train-word" id="trainWord">Click to Start</div>
+                <div class="train-counter">已添加 <span id="trainCount">0</span> 个细节 / details added</div>
+                <div class="train-sentence" id="trainSentence">🎲 点击按钮开始 / Click to Start</div>
+                <p class="hint-text" style="color:var(--text-tertiary);margin-bottom:20px;" id="trainHint">
+                    轮流添加细节，让句子越来越丰富 / Take turns adding details
+                </p>
+                <div class="detail-buttons" id="detailButtons">
+                    <button class="detail-btn when" onclick="addDetail('when')">⏰ 时间 / When</button>
+                    <button class="detail-btn where" onclick="addDetail('where')">📍 地点 / Where</button>
+                    <button class="detail-btn why" onclick="addDetail('why')">💡 原因 / Why</button>
+                    <button class="detail-btn how" onclick="addDetail('how')">🔧 方式 / How</button>
+                    <button class="detail-btn who" onclick="addDetail('who')">👥 和谁 / With Whom</button>
+                </div>
                 <div class="train-buttons">
-                    <button class="train-btn speak" onclick="nextTrainWord()">🎲 下一个词 / Next</button>
-                    <button class="train-btn" onclick="speakTrainWord()">🔊 TTS 朗读</button>
+                    <button class="train-btn speak" onclick="nextTrain()">🚂 发新车 / New Train</button>
+                    <button class="train-btn" onclick="speakTrainSentence()">🔊 朗读句子</button>
                 </div>
             </div>
         </div>
@@ -531,61 +573,31 @@
                 title: '🏨 酒店入住与行李寄存 / Hotel Check-in & Luggage Storage',
                 situationEn: 'You arrive at the hotel for check-in, but your room is not ready yet. You need to store your luggage, ask about check-out time, and later check out and request luggage storage.',
                 situationZh: '你到达酒店办理入住，但房间还没准备好。你需要寄存行李，询问退房时间。退房时需要寄存行李继续游玩。',
+                summaryHint: 'Guest asks to check in, receptionist explains room is not ready, offers luggage storage at bell desk. Guest asks about check-out time and breakfast. Later, guest checks out and requests to keep bags until 5pm. Receptionist confirms bags will be safe.',
+                summaryHintZh: '客人要求入住，前台解释房间尚未准备好，提供行李寄存服务。客人询问退房时间和早餐。稍后客人退房并要求寄存行李到下午5点。前台确认行李安全保管。',
                 words: ['reservation','check-in','luggage storage','check-out','late check-out','key card','bell desk','deposit'],
-                roleA: { name:'Student A: 前台接待 / Receptionist', phrases:[
-                    {en:'Welcome to our hotel. May I have your name, please?', zh:'欢迎光临，请问您的名字？'},
-                    {en:'I\'m sorry, your room is still being prepared.', zh:'抱歉，您的房间还在准备中。'},
-                    {en:'You can leave your luggage with us at the bell desk.', zh:'您可以把行李寄存在行李服务台。'},
-                    {en:'Check-out is at 12 noon. Would you like a late check-out?', zh:'退房时间是中午12点，需要延迟退房吗？'},
-                    {en:'We\'ll keep your luggage safe until you return.', zh:'我们会安全保管您的行李直到您回来。'}
-                ]},
-                roleB: { name:'Student B: 客人 / Guest', phrases:[
-                    {en:'Hi, I have a reservation under the name [Name].', zh:'你好，我用[名字]预订了房间。'},
-                    {en:'That\'s okay. Can I store my luggage here first?', zh:'没关系，我能先把行李寄存在这吗？'},
-                    {en:'What time is check-out? Is breakfast included?', zh:'退房是几点？含早餐吗？'},
-                    {en:'I\'m checking out now. Can you keep my bags until 5pm?', zh:'我现在退房，能把行李存到下午5点吗？'},
-                    {en:'Is there anywhere nearby I can visit while waiting?', zh:'等的时候附近有什么可以逛逛的吗？'}
-                ]}
+                refLink: 'https://www.youtube.com/results?search_query=english+conversation+hotel+check+in',
+                refLabel: '📺 参考视频：酒店英语对话 / Hotel English Conversation'
             },
             {
                 title: '✈️ 机场行李遗失 / Lost Luggage at Airport',
                 situationEn: 'You arrived at your destination but your luggage is missing. You need to report it at the baggage claim office, describe your bag, and fill out a claim form.',
                 situationZh: '到达目的地后发现行李不见了。你需要去行李查询处报失，描述行李特征，填写申报表格，询问补偿。',
+                summaryHint: 'Passenger reports missing luggage to airport staff, describes the bag (black suitcase, red ribbon), shows claim tag and boarding pass. Staff asks for details and provides a claim form. Passenger asks about compensation and delivery timeline.',
+                summaryHintZh: '旅客向机场工作人员报失行李，描述行李特征（黑色行李箱，红色丝带），出示行李标签和登机牌。工作人员要求填写申报表。旅客询问补偿和送达时间。',
                 words: ['lost luggage','baggage claim','claim tag','description','report','compensation','delivery','tracking number'],
-                roleA: { name:'Student A: 机场工作人员 / Airport Staff', phrases:[
-                    {en:'Can I help you? What seems to be the problem?', zh:'需要帮助吗？有什么问题？'},
-                    {en:'Can you describe your luggage? Color? Size? Brand?', zh:'能描述一下行李吗？颜色？大小？品牌？'},
-                    {en:'Do you have your baggage claim tag?', zh:'您有行李领取标签吗？'},
-                    {en:'Please fill out this claim form with your contact details.', zh:'请填写这张申报表，留下联系方式。'},
-                    {en:'We\'ll deliver it to your hotel once we find it.', zh:'找到后我们会送到您的酒店。'}
-                ]},
-                roleB: { name:'Student B: 旅客 / Passenger', phrases:[
-                    {en:'My luggage didn\'t arrive. I\'ve been waiting for 30 minutes.', zh:'我的行李没到，等了30分钟了。'},
-                    {en:'It\'s a black suitcase with a red ribbon on the handle.', zh:'一个黑色行李箱，手柄上系了红色丝带。'},
-                    {en:'Here\'s my baggage claim tag and boarding pass.', zh:'这是我的行李标签和登机牌。'},
-                    {en:'What compensation do you offer for delayed luggage?', zh:'行李延误有什么补偿吗？'},
-                    {en:'How long will it take to find my bag?', zh:'找到行李需要多长时间？'}
-                ]}
+                refLink: 'https://www.youtube.com/results?search_query=english+conversation+lost+luggage+airport',
+                refLabel: '📺 参考视频：机场行李遗失英语 / Lost Luggage English'
             },
             {
                 title: '💼 会议改期 / Meeting Rescheduled',
                 situationEn: 'Your flight is delayed, making you unable to attend an important meeting on time. You need to contact your colleague, explain the situation, and reschedule.',
                 situationZh: '航班延误，你无法按时参加重要会议。你需要联系同事，解释情况，重新安排会议时间。',
+                summaryHint: 'Colleague asks where the delayed traveler is as meeting is about to start. Traveler explains flight is delayed 3 hours, apologizes, asks to reschedule. Colleague checks team availability and suggests 4pm or tomorrow. Traveler agrees and will prepare slides.',
+                summaryHintZh: '同事询问延误旅客在哪，会议即将开始。旅客解释航班延误3小时，道歉并请求改期。同事查看团队时间，建议下午4点或明天。旅客同意并承诺准备PPT。',
                 words: ['delayed','reschedule','apologize','update','agenda','availability','time zone','conference call'],
-                roleA: { name:'Student A: 同事 / Colleague', phrases:[
-                    {en:'Hey, the meeting is about to start. Where are you?', zh:'嘿，会议快开始了，你在哪？'},
-                    {en:'Oh no, how long is the delay? Can you join remotely?', zh:'糟糕，延误多久？能远程加入吗？'},
-                    {en:'Let me check everyone\'s availability for later today.', zh:'让我查一下大家今天晚些时候是否有空。'},
-                    {en:'Can we do 4pm your time? I\'ll send an updated invite.', zh:'你那边的下午4点可以吗？我发新的邀请。'},
-                    {en:'No worries! Safety first. We can handle things here.', zh:'没问题！安全第一。这边我们来处理。'}
-                ]},
-                roleB: { name:'Student B: 你 / You (delayed traveler)', phrases:[
-                    {en:'I\'m so sorry — my flight has been delayed by 3 hours.', zh:'非常抱歉 — 我的航班延误了3小时。'},
-                    {en:'I won\'t make it in time. Can we reschedule the meeting?', zh:'我来不及了，能重新安排会议吗？'},
-                    {en:'The internet at the airport is unstable. Let me try Zoom.', zh:'机场网络不稳定，我试试用Zoom。'},
-                    {en:'Does tomorrow morning work for everyone? I\'ll be in the office.', zh:'明天早上大家方便吗？我就在办公室了。'},
-                    {en:'Thank you for understanding. I\'ll prepare the slides tonight.', zh:'谢谢理解。我今晚准备好PPT。'}
-                ]}
+                refLink: 'https://www.youtube.com/results?search_query=english+conversation+reschedule+meeting',
+                refLabel: '📺 参考视频：会议改期英语对话 / Reschedule Meeting English'
             }
         ];
 
@@ -607,20 +619,14 @@
                         <div class="word-cloud">
                             ${s.words.map(w => `<span class="word-tag">${w}</span>`).join('')}
                         </div>
-                        <div class="role-play-cards">
-                            <div class="role-card card-a">
-                                <div class="role-header">
-                                    <div><div class="role-title">${s.roleA.name}</div></div>
-                                </div>
-                                ${s.roleA.phrases.map(p => `<div class="role-phrase" onclick="speakPhrase(this)">${p.en}<span class="zh">${p.zh}</span></div>`).join('')}
-                            </div>
-                            <div class="role-card card-b">
-                                <div class="role-header">
-                                    <div><div class="role-title">${s.roleB.name}</div></div>
-                                </div>
-                                ${s.roleB.phrases.map(p => `<div class="role-phrase" onclick="speakPhrase(this)">${p.en}<span class="zh">${p.zh}</span></div>`).join('')}
-                            </div>
+                        <div class="summary-hint-box">
+                            <div class="summary-label">🎭 对话总结 / Dialogue Summary</div>
+                            <div class="summary-en">${s.summaryHint}</div>
+                            <div class="summary-zh">${s.summaryHintZh}</div>
                         </div>
+                        <a href="${s.refLink}" target="_blank" rel="noopener" class="ref-link-btn">
+                            ${s.refLabel}
+                        </a>
                     </div>
                 </div>
             `).join('');
@@ -661,27 +667,74 @@
             }, 1000);
         }
 
-        // ============ Train Game ============
-        const trainWords = [
-            'boarding pass','departure','upgrade','lounge','compensation','voucher','itinerary','layover',
-            'standby','complimentary','reservation','amenities','confirmation','express','membership',
-            'benefits','luggage allowance','priority boarding','check-in','delayed','cancelled',
-            'reschedule','apologize','describe','request','announcement','connecting flight'
+        // ============ Module 3: Sentence Train / 开火车 ============
+        const trainBases = [
+            'I checked in at the hotel',
+            'I lost my luggage',
+            'The meeting was cancelled',
+            'I booked a flight',
+            'I went to the airport',
+            'I ordered food at the restaurant',
+            'I called the front desk',
+            'I missed my train',
         ];
-        let trainCount = 0;
-        let lastTrainIdx = -1;
-        function nextTrainWord() {
-            let idx;
-            do { idx = Math.floor(Math.random() * trainWords.length); } while (idx === lastTrainIdx && trainWords.length > 1);
-            lastTrainIdx = idx;
-            document.getElementById('trainWord').textContent = trainWords[idx];
-            trainCount++;
-            document.getElementById('trainCount').textContent = trainCount;
-            if (trainCount >= 5) createConfetti();
+
+        const details = {
+            when: ['yesterday','this morning','at 3pm','on Monday','last week','after breakfast','before the meeting','at midnight'],
+            where: ['in Beijing','at the airport','near the lobby','on the 5th floor','at the gate','in the conference room','at the front desk','outside the station'],
+            why: ['because the flight was late','because it was too noisy','because of the weather','because I forgot','because the internet was down','because I woke up late'],
+            how: ['by phone','very quickly','by email','with great difficulty','by taxi','online','in a hurry'],
+            who: ['with my colleague','with my boss','with my family','alone','with a friend','with the receptionist','with the manager'],
+        };
+
+        const detailLabels = {
+            when: '时间', where: '地点', why: '原因', how: '方式', who: '和谁'
+        };
+
+        let trainBase = '';
+        let trainDetails = [];
+        let trainDetailCount = 0;
+
+        function nextTrain() {
+            trainBase = trainBases[Math.floor(Math.random() * trainBases.length)];
+            trainDetails = [];
+            trainDetailCount = 0;
+            updateTrainDisplay();
+            document.getElementById('trainCount').textContent = '0';
         }
-        function speakTrainWord() {
-            const word = document.getElementById('trainWord').textContent;
-            if (word !== 'Click to Start') speak(word);
+
+        function addDetail(type) {
+            if (!trainBase) { nextTrain(); return; }
+            const pool = details[type];
+            const word = pool[Math.floor(Math.random() * pool.length)];
+            trainDetails.push({ type, word });
+            trainDetailCount++;
+            document.getElementById('trainCount').textContent = trainDetailCount;
+            updateTrainDisplay();
+            if (trainDetailCount >= 5) createConfetti();
+        }
+
+        function updateTrainDisplay() {
+            const el = document.getElementById('trainSentence');
+            if (!trainBase) {
+                el.textContent = '🎲 点击按钮开始 / Click to Start';
+                document.getElementById('trainHint').textContent = '轮流添加细节，让句子越来越丰富 / Take turns adding details';
+                return;
+            }
+            let sentence = trainBase;
+            trainDetails.forEach(d => { sentence += ' ' + d.word; });
+            sentence += '.';
+            el.textContent = sentence;
+
+            const zhParts = trainDetails.map(d => d.word + '(' + (detailLabels[d.type]||d.type) + ')');
+            document.getElementById('trainHint').innerHTML = trainDetails.length > 0
+                ? '已添加：' + zhParts.join(' → ') + '<br>继续添加，让句子更完整！'
+                : '轮流添加细节，让句子越来越丰富 / Take turns adding details';
+        }
+
+        function speakTrainSentence() {
+            const text = document.getElementById('trainSentence').textContent;
+            if (text && text !== '🎲 点击按钮开始 / Click to Start') speak(text);
         }
 
         // ============ Module 4: 2-Min Challenge ============
