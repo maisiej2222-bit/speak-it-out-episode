@@ -252,7 +252,29 @@
         .train-btn:hover { border-color: var(--accent-blue); }
         .train-btn.speak { background: var(--accent-green); border-color: var(--accent-green); color: #000; }
 
-        /* Module 4: 2-Min Challenge */
+        /* Module 4: Speak It Out */
+        .speakout-area { margin-top: 40px; text-align: center; }
+        .speakout-counter { font-size: 1rem; color: var(--text-tertiary); margin-bottom: 20px; }
+        .speakout-word {
+            font-size: 3rem; font-weight: 700; margin: 20px 0; padding: 25px;
+            background: var(--bg-secondary); border-radius: 16px;
+            min-height: 60px; display: flex; align-items: center; justify-content: center;
+            border: 2px solid var(--border-color);
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .speakout-structure {
+            background: rgba(48,209,88,0.08); border: 1px solid rgba(48,209,88,0.25);
+            border-radius: 12px; padding: 15px 25px; margin-bottom: 15px; font-size: 1.1rem;
+            color: var(--accent-green); font-weight: 500;
+        }
+        .speakout-structure .structure-label {
+            font-size: 0.75rem; color: var(--text-tertiary); display: block; margin-bottom: 4px;
+        }
+        .speakout-hint { color: var(--text-tertiary); font-size: 0.9rem; margin-bottom: 20px; }
+        .speakout-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+
+        /* Module 5: 2-Min Challenge */
         .challenge-area { text-align: center; margin-top: 30px; }
         .spinner-container {
             position: relative; width: 300px; height: 300px; margin: 30px auto;
@@ -430,11 +452,36 @@
         </div>
     </section>
 
-    <!-- Module 4: 2-Minute Conversation Challenge -->
+    <!-- Module 4: Speak It Out -->
     <section class="module" id="module4">
         <div class="container">
             <div class="module-header">
                 <span class="module-number">Module 4</span>
+                <h2>Speak It Out 脱口而出</h2>
+                <p class="subtitle">See a word. Grab a pattern. Say a sentence.</p>
+                <p class="subtitle-zh">看到单词和句型提示，立刻说出完整句子。练到张口就来！</p>
+            </div>
+            <div class="speakout-area">
+                <div class="speakout-counter">已开口 <span id="soCount">0</span> 次 / spoken</div>
+                <div class="speakout-word" id="soWord">🎲 点击按钮开始 / Click to Start</div>
+                <div class="speakout-structure" id="soStructure" style="display:none;">
+                    <span class="structure-label">句子结构 / Pattern</span>
+                    <span id="soPattern"></span>
+                </div>
+                <p class="speakout-hint" id="soHint">💡 先看句型结构，再用单词造句 / Check the pattern, then make a sentence</p>
+                <div class="speakout-buttons">
+                    <button class="practice-btn" onclick="nextSpeakOut()">🎲 下一个词 / Next Word</button>
+                    <button class="practice-btn practice-clear" onclick="speakSpeakOut()">🔊 朗读 / Speak</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Module 5: 2-Minute Conversation Challenge -->
+    <section class="module" id="module5">
+        <div class="container">
+            <div class="module-header">
+                <span class="module-number">Module 5</span>
                 <h2>2-Min Conversation Challenge 对话挑战</h2>
                 <p class="subtitle">Spin. Speak. Don't stop.</p>
                 <p class="subtitle-zh">抽取场景，两人全英文对话两分钟。</p>
@@ -737,7 +784,55 @@
             if (text && text !== '🎲 点击按钮开始 / Click to Start') speak(text);
         }
 
-        // ============ Module 4: 2-Min Challenge ============
+        // ============ Module 4: Speak It Out ============
+        const speakOutData = [
+            { word:'hotel', pattern:'I am staying at a _____. / The _____ is near the airport.' },
+            { word:'reservation', pattern:'I have a _____. / I would like to make a _____.' },
+            { word:'check in', pattern:'I want to _____. / What time can I _____?' },
+            { word:'check out', pattern:'I need to _____. / _____ is at 12 noon.' },
+            { word:'passport', pattern:'Here is my _____. / I need to show my _____.' },
+            { word:'luggage', pattern:'This is my _____. / Where can I put my _____?' },
+            { word:'boarding pass', pattern:'I have my _____. / Please show your _____.' },
+            { word:'gate', pattern:'Where is the _____? / The _____ is over there.' },
+            { word:'flight', pattern:'My _____ is delayed. / The _____ takes 2 hours.' },
+            { word:'delay', pattern:'There is a _____. / The flight has a _____.' },
+            { word:'cancel', pattern:'I need to _____ my booking. / They had to _____ the meeting.' },
+            { word:'meeting', pattern:'I have a _____ at 3pm. / The _____ is cancelled.' },
+            { word:'help', pattern:'Can you _____ me? / I need some _____.' },
+            { word:'sorry', pattern:'I am _____. / _____ for being late.' },
+            { word:'thank you', pattern:'_____ for your help. / _____ very much.' },
+            { word:'how much', pattern:'_____ does it cost? / _____ is this?' },
+            { word:'where', pattern:'_____ is the bathroom? / _____ can I find a taxi?' },
+            { word:'what time', pattern:'_____ does it start? / _____ is check-out?' },
+            { word:'I would like', pattern:'_____ a coffee. / _____ to book a room.' },
+            { word:'could you', pattern:'_____ help me? / _____ repeat that please?' },
+            { word:'room', pattern:'The _____ is too noisy. / I need a quiet _____.' },
+            { word:'taxi', pattern:'I need a _____. / Can you call a _____?' },
+            { word:'wait', pattern:'Please _____ a moment. / I can _____ here.' },
+            { word:'call', pattern:'I will _____ you. / Can you _____ the front desk?' },
+            { word:'send', pattern:'Please _____ me the details. / I will _____ an email.' },
+        ];
+        let soCount = 0, soLastIdx = -1;
+        function nextSpeakOut() {
+            let idx;
+            do { idx = Math.floor(Math.random() * speakOutData.length); }
+            while (idx === soLastIdx && speakOutData.length > 1);
+            soLastIdx = idx;
+            const data = speakOutData[idx];
+            document.getElementById('soWord').textContent = data.word;
+            document.getElementById('soPattern').textContent = data.pattern;
+            document.getElementById('soStructure').style.display = 'block';
+            soCount++;
+            document.getElementById('soCount').textContent = soCount;
+            document.getElementById('soHint').innerHTML = '💡 用句型「' + data.pattern + '」造句 / Make your own sentence';
+            if (soCount >= 10) createConfetti();
+        }
+        function speakSpeakOut() {
+            const word = document.getElementById('soWord').textContent;
+            if (word && word !== '🎲 点击按钮开始 / Click to Start') speak(word);
+        }
+
+        // ============ Module 5: 2-Min Challenge ============
         const challengeScenarios = [
             {
                 title: '🏨 酒店换房 / Hotel Room Change',
